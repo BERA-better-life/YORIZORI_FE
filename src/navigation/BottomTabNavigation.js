@@ -1,6 +1,10 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import Home from "../ui/screen/Home";
 import MyFridge from "../ui/screen/MyFridge";
+import Entypo from '@expo/vector-icons/Entypo';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { TouchableOpacity, View } from "react-native";
+import { colors } from "../ui/styles/colors";
 
 
 const Tab = createBottomTabNavigator();
@@ -11,7 +15,34 @@ const BottomTabNavigation = () => {
 
   return (
     <Tab.Navigator screenOptions={({route}) => ({
-      headerShown:false})}>
+      headerShown:false,
+      tabBarShowLabel:false,
+      tabBarIcon: ({ focused, color, size }) => {
+        if (route.name === "HOME") {
+          return <View>
+          <Entypo name="home" size={32} color={focused ? colors.pointRed : 'white'} />
+        </View>;
+        } else if (route.name === "MyFridge") {
+          return <View><MaterialCommunityIcons name="fridge" size={32} color={focused ? colors.pointRed : 'white'}/></View>;
+        }
+        return null;
+      },
+      tabBarItemStyle: {
+        height: 100,
+      },      
+      safeAreaInsets: {
+        bottom: 0, // 👈 이거 없으면 iPhone에서 짤림
+      },
+      tabBarStyle: {
+        backgroundColor: '#CDE9FF',
+        height: 100,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        position: 'absolute',
+        borderTopWidth: 0,
+        paddingTop:20
+      },})}
+      >
       <Tab.Screen name="HOME" component={Home} />
       {/* <Tab.Screen name="TODAY" component={Today}/>
       <Tab.Screen name="REPORT" component={Statistic}/>
