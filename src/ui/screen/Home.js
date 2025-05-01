@@ -8,9 +8,11 @@ import logo from '../../../assets/logo.png';
 import notification_icon from '../../../assets/notification_icon.png';
 import cutlery_icon from '../../../assets/cutlery_icon.png';
 import MarginVertical from "../components/MarginVertical";
+import { useNavigation } from "@react-navigation/native";
 
 const Home = () => {
   const ingredientsInfo = ['토마토','감자','우유','치즈','베이컨']
+  const navigation = useNavigation();
 
   return (
     <SafeAreaView style={{backgroundColor:colors.bgColor}}>
@@ -20,7 +22,7 @@ const Home = () => {
         <MarginVertical margin={10}/>
         <Header>
           <LogoImg source={logo}/>
-          <AlertIcon>
+          <AlertIcon onPress={() => navigation.navigate("Notification")}>
             <Image source={notification_icon} style={{height:35, width:35}}/>
           </AlertIcon>
         </Header>
