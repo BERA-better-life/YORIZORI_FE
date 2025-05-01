@@ -3,9 +3,9 @@ import { styled } from "styled-components"
 import { colors } from "../styles/colors"
 
 
-const Button = ({text, handleButton}) => {
+const Button = ({text, handleButton, width}) => {
   return (
-    <ButtonBody onPress={handleButton}>
+    <ButtonBody onPress={handleButton} style={{width:width? width : 230}}>
       <ButtonText>{text}</ButtonText>
     </ButtonBody>
   )
