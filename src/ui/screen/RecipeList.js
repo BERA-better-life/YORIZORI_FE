@@ -51,7 +51,7 @@ const RecipeList = () => {
           <RecipeArea>
             {recipeArray.map((el,index) => {
               return(
-                <RecipeEl key={index}>
+                <RecipeEl key={index} onPress={() => navigation.navigate("DetailRecipe")}>
                   <RecipeImg>
                     <MaterialIcons name="image-not-supported" size={40} color="black" />
                   </RecipeImg>
