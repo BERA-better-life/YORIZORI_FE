@@ -7,15 +7,15 @@ import SearchIngredients from '../components/SearchIngredients'
 import Button from '../components/Button'
 import MarginVertical from '../components/MarginVertical'
 import { useState } from 'react'
+import { useNavigation } from '@react-navigation/native'
 
 const SearchRecipe = () => {
   const [step, setStep] = useState(1);
+  const navigation = useNavigation();
   
   const handleNextButton = () => {
     if(step === 1)setStep(2)
-    else{
-
-    }
+    else{navigation.navigate("RecipeList")}
   }
 
 
