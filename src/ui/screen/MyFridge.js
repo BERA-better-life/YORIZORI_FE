@@ -6,9 +6,11 @@ import cart_icon from '../../../assets/cart_icon.png'
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Button from "../components/Button"
 import MarginVertical from "../components/MarginVertical"
+import { useNavigation } from "@react-navigation/native"
 
 const MyFridge = () => {
   const ingredientsArray = new Array(10).fill("")
+  const navigation = useNavigation();
 
 
   return (
@@ -54,7 +56,7 @@ const MyFridge = () => {
         </FridgeArea>
         <MarginVertical margin={50}/>
         <View style={{alignItems:'center'}}>
-          <Button text={"재료 추가하기"}/>
+          <Button text={"재료 추가하기"} handleButton={() => navigation.navigate("AddFreezerEl")}/>
         </View>
       </Body>
     </SafeAreaView>
