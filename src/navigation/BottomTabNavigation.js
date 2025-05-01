@@ -5,6 +5,8 @@ import Entypo from '@expo/vector-icons/Entypo';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { TouchableOpacity, View } from "react-native";
 import { colors } from "../ui/styles/colors";
+import SearchRecipe from "../ui/screen/SearchRecipe";
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 
 const Tab = createBottomTabNavigator();
@@ -24,6 +26,8 @@ const BottomTabNavigation = () => {
         </View>;
         } else if (route.name === "MyFridge") {
           return <View><MaterialCommunityIcons name="fridge" size={32} color={focused ? colors.pointRed : 'white'}/></View>;
+        } else if (route.name === "Search"){
+          return <View><FontAwesome name="search" size={32} color={focused ? colors.pointRed : 'white'} /></View>
         }
         return null;
       },
@@ -48,6 +52,7 @@ const BottomTabNavigation = () => {
       <Tab.Screen name="REPORT" component={Statistic}/>
       <Tab.Screen name="MY" component={MyPage} /> */}
       <Tab.Screen name="MyFridge" component={MyFridge}/>
+      <Tab.Screen name="Search" component={SearchRecipe}/>
     </Tab.Navigator>
   )
 }
