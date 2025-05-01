@@ -6,6 +6,7 @@ import Login from "../ui/screen/Login";
 import Signup from "../ui/screen/Signup";
 import RecipeList from "../ui/screen/RecipeList";
 import DetailRecipe from "../ui/screen/DetailRecipe";
+import Notification from "../ui/screen/Notification";
 
 
 const Stack = createStackNavigator();
@@ -25,6 +26,7 @@ const StackNavigation = () => {
       <Stack.Screen name="Signup" component={Signup}/>
       <Stack.Screen name="RecipeList" component={RecipeList}/>
       <Stack.Screen name="DetailRecipe" component={DetailRecipe}/>
+      <Stack.Screen name="Notification" component={Notification}/>
     </Stack.Navigator>
   )
 }
