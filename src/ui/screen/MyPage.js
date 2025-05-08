@@ -7,6 +7,7 @@ import { size } from '../styles/size'
 import logo from '../../../assets/logo.png'
 import MarginVertical from '../components/MarginVertical'
 import Ionicons from '@expo/vector-icons/Ionicons';
+import RecipeEl from '../components/RecipeEl'
 
 
 const MyPage = () => {
@@ -54,9 +55,9 @@ const MyPage = () => {
             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
             {recipes.map((el,index) => {
               return(
-                <LikeRecipeEl key={index}>
+                <RecipeEl key={index}>
                   
-                </LikeRecipeEl>
+                </RecipeEl>
               )
             })}
             </ScrollView>
@@ -138,12 +139,3 @@ const LikeRecipes = styled.View`
   display:flex;
 
 `
-
-const LikeRecipeEl = styled.TouchableOpacity`
-  width:140px;
-  height:180px;
-  background-color:#fff;
-  border-radius:10px;
-  margin-right:10px;
-`
-
