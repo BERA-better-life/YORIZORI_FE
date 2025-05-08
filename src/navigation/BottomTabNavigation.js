@@ -7,6 +7,8 @@ import { TouchableOpacity, View } from "react-native";
 import { colors } from "../ui/styles/colors";
 import SearchRecipe from "../ui/screen/SearchRecipe";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import MyPage from "../ui/screen/MyPage";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 
 const Tab = createBottomTabNavigator();
@@ -28,6 +30,8 @@ const BottomTabNavigation = () => {
           return <View><MaterialCommunityIcons name="fridge" size={32} color={focused ? colors.pointRed : 'white'}/></View>;
         } else if (route.name === "Search"){
           return <View><FontAwesome name="search" size={32} color={focused ? colors.pointRed : 'white'} /></View>
+        } else if (route.name === "MyPage"){
+          return <View><MaterialIcons name="person" size={32} color={focused ? colors.pointRed : 'white'}  /></View>
         }
         return null;
       },
@@ -53,6 +57,7 @@ const BottomTabNavigation = () => {
       <Tab.Screen name="MY" component={MyPage} /> */}
       <Tab.Screen name="MyFridge" component={MyFridge}/>
       <Tab.Screen name="Search" component={SearchRecipe}/>
+      <Tab.Screen name="MyPage" component={MyPage}/>
     </Tab.Navigator>
   )
 }

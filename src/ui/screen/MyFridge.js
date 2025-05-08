@@ -22,10 +22,10 @@ const MyFridge = () => {
         <MarginVertical margin={10}/>
         <View style={{flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
           <View style={{flexDirection:'row', alignItems:'center', gap:5}}>
+            <TouchableOpacity style={{flexDirection:'row', alignItems:'center'}} onPress={() => navigation.navigate("MarketRecommand")}>
             <Text style={{color:colors.fontMain, fontSize:20}}>장보기 추천받기</Text>
-            <TouchableOpacity>
-              <Image source={cart_icon} style={{width:32, height:32}}/>
-            </TouchableOpacity>
+            <Image source={cart_icon} style={{width:32, height:32}}/>
+            </TouchableOpacity> 
           </View>
           <TouchableOpacity>
             <FontAwesome name="trash" size={32} color={colors.fontMain} />
