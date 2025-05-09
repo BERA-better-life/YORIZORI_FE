@@ -3,9 +3,9 @@ import { styled } from "styled-components"
 import { colors } from "../styles/colors"
 
 
-const Button = ({text, handleButton, width}) => {
+const Button = ({text, handleButton, width, isValid}) => {
   return (
-    <ButtonBody onPress={handleButton} style={{width:width? width : 230}}>
+    <ButtonBody onPress={() => isValid ? handleButton() : ""} style={{width:width? width : 230, backgroundColor:isValid ? "#FF7667" : "rgba(255,118,103,.5)"}}>
       <ButtonText>{text}</ButtonText>
     </ButtonBody>
   )

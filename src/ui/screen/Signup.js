@@ -6,11 +6,30 @@ import logo from '../../../assets/logo.png';
 import Button from "../components/Button";
 import MarginVertical from "../components/MarginVertical";
 import { useNavigation } from "@react-navigation/native";
+import { useUser } from "../../hooks/useUser";
+import { useEffect, useState } from "react";
 
 
 const Signup = () => {
   const navigation = useNavigation();
   const placeholderArray = ["이메일을 입력해주세요","영문, 숫자 포함 8~16글자","비밀번호 확인","닉네임을 입력해주세요"]
+  const {handleSignup} = useUser()
+  const [userInfo, setUserInfo] = useState({id:"", password:"", password2:"", userName:""});
+  const [isValid, setIsValid] = useState(false)
+  const emailReg = /^[A-Za-z0-9]+([._%+\-][A-Za-z0-9]+)*@[A-Za-z0-9\-]+(\.[A-Za-z0-9\-]+)*\.[A-Za-z]{2,}$/
+  const pwReg = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/
+
+
+
+  useEffect(() => {
+    if(emailReg.test(userInfo.id) && pwReg.test(userInfo.password) && userInfo.password === userInfo.password2 && userInfo.userName.length > 0 && userInfo.id.length>0 && userInfo.password.length>0){
+      setIsValid(true)
+    }else{
+      setIsValid(false)
+    }
+    console.log(isValid)
+  }, [userInfo])
+  
 
   return (
     <SafeAreaView style={{backgroundColor:colors.bgColor}}>
@@ -22,8 +41,20 @@ const Signup = () => {
           {placeholderArray.map((el,index) => {
             return(
             <View style={{width:'70%', justifyContent:'center', alignItems:'center'}} key={index}>
-              <InputBox placeholder={el}/>
+              <InputBox
+                placeholder={el}
+                value={index === 0 ? userInfo.id : index === 1 ? userInfo.password : index === 2 ? userInfo.password2 : userInfo.userName}
+                onChangeText={(text) => {index === 0 ? setUserInfo(prev => ({...prev, id:text}))
+                : index === 1 ? setUserInfo(prev => ({...prev, password:text})) 
+                : index === 2 ? setUserInfo(prev => ({...prev, password2:text})) 
+                : setUserInfo(prev => ({...prev, userName:text})) }}  
+                secureTextEntry={index === 1 || index === 2 ? true : false}
+              />
+              {index === 0 && emailReg.test(userInfo.id) || index === 1 && pwReg.test(userInfo.password) || index === 2 && userInfo.password === userInfo.password2 && userInfo.password.length>0 || index === 3 &&  userInfo.userName.length > 0 ? 
               <ValidCircle/>
+              :
+              <></>
+              }
             </View>
             )
           })}
@@ -37,7 +68,7 @@ const Signup = () => {
         </View>
         <MarginVertical margin={55}/>
         <View style={{width:'100%', justifyContent:'center', alignItems:'center'}}>
-          <Button text={"회원가입하기"} width={"70%"} handleButton={() => navigation.navigate("Tabs")}/>
+          <Button text={"회원가입하기"} width={"70%"} handleButton={() => handleSignup(userInfo)} isValid={isValid}/>
         </View>
       </Body>
     </SafeAreaView>

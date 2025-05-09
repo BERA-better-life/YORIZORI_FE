@@ -9,10 +9,22 @@ import notification_icon from '../../../assets/notification_icon.png';
 import cutlery_icon from '../../../assets/cutlery_icon.png';
 import MarginVertical from "../components/MarginVertical";
 import { useNavigation } from "@react-navigation/native";
+import { useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Home = () => {
   const ingredientsInfo = ['토마토','감자','우유','치즈','베이컨']
   const navigation = useNavigation();
+
+  const getToken = async() => {
+    const token = await AsyncStorage.getItem("accessToken")
+    console.log(token)
+  }
+
+  useEffect(() => {
+    getToken()
+  }, [])
+  
 
   return (
     <SafeAreaView style={{backgroundColor:colors.bgColor}}>
