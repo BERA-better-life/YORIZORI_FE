@@ -6,11 +6,20 @@ import logo from '../../../assets/logo.png';
 import Button from "../components/Button";
 import MarginVertical from "../components/MarginVertical";
 import { useNavigation } from "@react-navigation/native";
+import { useUser } from "../../hooks/useUser";
+import { useEffect, useState } from "react";
 
 
 const Login = () => {
   const navigation = useNavigation();
+  const {handleLogin} = useUser();
+  const [id, setId] = useState("");
+  const [password,setPassword] = useState("");
 
+  useEffect(() => {
+    console.log(id, password)
+  }, [id, password])
+  
   return (
     <SafeAreaView style={{backgroundColor:colors.bgColor}}>
       <Body>
@@ -19,12 +28,26 @@ const Login = () => {
         <MarginVertical margin={20}/>
         <InputArea>
           <View style={{width:'70%', justifyContent:'center', alignItems:'center'}}>
-            <InputBox placeholder="이메일을 입력해주세요"/>
+            <InputBox
+              placeholder="이메일을 입력해주세요"
+              value={id}
+              onChange={(e) => setId(e.nativeEvent.text)}  
+            />
+            {id.length>0 ?
             <ValidCircle/>
+            :<></>
+            }
           </View>
           <View style={{width:'70%', justifyContent:'center', alignItems:'center'}}>
-            <InputBox placeholder="비밀번호를 입력해주세요"/>
-            <ValidCircle/>
+            <InputBox
+              placeholder="비밀번호를 입력해주세요"
+              value={password}
+              onChange={(e) => setPassword(e.nativeEvent.text)}    
+              secureTextEntry={true}
+            />
+            {password.length > 0 ?
+            <ValidCircle/>:<></>
+            }
           </View>
         </InputArea>
         <MarginVertical margin={15}/>
@@ -36,7 +59,7 @@ const Login = () => {
         </View>
         <MarginVertical margin={55}/>
         <View style={{width:'100%', justifyContent:'center', alignItems:'center'}}>
-          <Button text={"로그인하기"} width={"70%"} handleButton={() => navigation.navigate("Tabs")}/>
+          <Button text={"로그인하기"} width={"70%"} handleButton={() => handleLogin(id, password)} isValid={id.length>0 && password.length>0}/>
         </View>
       </Body>
     </SafeAreaView>
