@@ -6,11 +6,21 @@ import cart_icon from '../../../assets/cart_icon.png'
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Button from "../components/Button"
 import MarginVertical from "../components/MarginVertical"
-import { useNavigation } from "@react-navigation/native"
+import { useFocusEffect, useNavigation } from "@react-navigation/native"
+import { useCallback, useState } from "react"
+import { useIngredients } from "../../hooks/useIngredients"
 
 const MyFridge = () => {
   const ingredientsArray = new Array(10).fill("")
   const navigation = useNavigation();
+  const {getUserIngredients} = useIngredients();
+  const [ingredientsList, setIngredientsList] = useState([]);
+
+  useFocusEffect(
+    useCallback(() => {
+    getUserIngredients(setIngredientsList)
+    }, []),
+  )
 
 
   return (
@@ -35,10 +45,10 @@ const MyFridge = () => {
         <FridgeArea>
           <FridgeBody>
             <FridgeLeftHandle/>
-            {ingredientsArray.map((el,index) => {
+            {ingredientsList.map((el,index) => {
               return(
                 <IngredientEl key={index}>
-                  <IngredientText>{el}</IngredientText>
+                  <IngredientText>{el.ingredient_id}</IngredientText>
                 </IngredientEl>
               )
             })}
@@ -56,7 +66,7 @@ const MyFridge = () => {
         </FridgeArea>
         <MarginVertical margin={50}/>
         <View style={{alignItems:'center'}}>
-          <Button text={"재료 추가하기"} handleButton={() => navigation.navigate("AddFreezerEl")}/>
+          <Button text={"재료 추가하기"} handleButton={() => navigation.navigate("AddFreezerEl")} isValid={true}/>
         </View>
       </Body>
     </SafeAreaView>

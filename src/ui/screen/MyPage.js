@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 import { Image, SafeAreaView, ScrollView, TouchableOpacity, View } from 'react-native'
 import { styled } from 'styled-components'
 import { colors } from '../styles/colors'
@@ -8,11 +8,22 @@ import logo from '../../../assets/logo.png'
 import MarginVertical from '../components/MarginVertical'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import RecipeEl from '../components/RecipeEl'
+import { useFocusEffect } from '@react-navigation/native'
+import { useLike } from '../../hooks/useLike'
 
 
 const MyPage = () => {
   const info = [["냉장고 재료","10개"],["저장한 레시피","3개"],["유통기한 임박 재료", "2개"]]
   const recipes = new Array(5).fill(true)
+  const {getLikeList} = useLike();
+  const [likeList,setLikeList] = useState([])
+
+  useFocusEffect(
+    useCallback(() => {
+    getLikeList(setLikeList)
+    }, []),
+  )
+  
 
   return (
     <SafeAreaView style={{backgroundColor:colors.bgColor}}>
@@ -53,9 +64,9 @@ const MyPage = () => {
           <MarginVertical margin={13}/>
           <LikeRecipes>
             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-            {recipes.map((el,index) => {
+            {likeList.map((el,index) => {
               return(
-                <RecipeEl key={index}>
+                <RecipeEl key={index} title={el.recipe_title}>
                   
                 </RecipeEl>
               )
