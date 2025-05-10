@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Image, SafeAreaView, ScrollView, TouchableOpacity, View } from 'react-native'
 import { styled } from 'styled-components'
 import { size } from '../styles/size'
@@ -6,15 +6,32 @@ import { colors } from '../styles/colors'
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import cartImg from '../../../assets/cartImg.png';
 import IngredientEl from '../components/IngredientEl'
-import { useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import RecipeEl from '../components/RecipeEl'
 import MarginVertical from '../components/MarginVertical'
+import { useIngredients } from '../../hooks/useIngredients'
+import { useRecipe } from '../../hooks/useRecipe'
 
 
 const MarketRecommand = () => {
   const ingredientsArray = ["토마토","토마토","토마토","토마토","토마토","토마토"]
   const navigation = useNavigation();
   const recipeArray = new Array(5).fill(false);
+  const {getCartRecommend} = useIngredients();
+  const [ingredients, setIngredients] = useState([]);
+  const {handleSearchRecipeForNonUser} = useRecipe();
+  const [recipeList, setRecipeList] = useState([]);
+
+  useFocusEffect(
+    useCallback(() => {
+    getCartRecommend(setIngredients)
+    }, []),
+  )
+
+  useEffect(() => {
+    handleSearchRecipeForNonUser(ingredients.join(", "),"",setRecipeList)
+  }, [ingredients])
+  
   
 
   return (
@@ -31,7 +48,7 @@ const MarketRecommand = () => {
         <MarketArea>
           <Image source={cartImg} style={{width:380,height:380, position:'absolute', top:0}}/>
           <View style={{flexDirection:'row', flexWrap:'wrap', width:300, height:300, justifyContent:'center',alignItems:'center', gap:10, marginTop:170}}>
-          {ingredientsArray.map((el,index) => {
+          {ingredients.map((el,index) => {
             return(
               <IngredientEl text={el} key={index}/>
             )
@@ -42,9 +59,9 @@ const MarketRecommand = () => {
         <MarginVertical margin={20}/>
         <RecipeArea>
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-            {recipeArray.map((el,index) => {
+            {recipeList.map((el,index) => {
               return(
-                <RecipeEl key={index}/>
+                <RecipeEl key={index} text={el.recipe_title}/>
               )
             })}
           </ScrollView>

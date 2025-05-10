@@ -8,13 +8,16 @@ import logo from '../../../assets/logo.png';
 import notification_icon from '../../../assets/notification_icon.png';
 import cutlery_icon from '../../../assets/cutlery_icon.png';
 import MarginVertical from "../components/MarginVertical";
-import { useNavigation } from "@react-navigation/native";
-import { useEffect } from "react";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useCallback, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useBookMark } from "../../hooks/useBookmark";
 
 const Home = () => {
   const ingredientsInfo = ['토마토','감자','우유','치즈','베이컨']
   const navigation = useNavigation();
+  const {getBookmarksList} = useBookMark();
+  const [bookmarkList,setBookmarkList] = useState([]);
 
   const getToken = async() => {
     const token = await AsyncStorage.getItem("accessToken")
@@ -24,6 +27,12 @@ const Home = () => {
   useEffect(() => {
     getToken()
   }, [])
+
+  useFocusEffect(
+    useCallback(() => {
+    getBookmarksList(setBookmarkList);
+    }, []),
+  )
   
 
   return (
@@ -71,10 +80,12 @@ const Home = () => {
         </TitleSection>
         <MarginVertical margin={10}/>
         <RecipesArea horizontal={true} showsHorizontalScrollIndicator={false}>
-          {ingredientsInfo.map((el,index) => {
+          {bookmarkList.map((el,index) => {
             return(
               <RecipeEl key={index}>
-
+                <RecipeImg/>
+                <MarginVertical margin={10}/>
+                <Text style={{fontSize:15, textAlign:'center'}}>{el.recipe_title}</Text>
               </RecipeEl>
             )
           })}
@@ -157,11 +168,20 @@ const IngredientEl = styled.View`
 `
 
 const RecipeEl = styled.TouchableOpacity`
-  width:120px;
+  width:130px;
   height:190px;
   background-color:#fff;
   border-radius:10px;
   margin-left:15px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+`
+
+const RecipeImg = styled.Image`
+  width:90%;
+  height:70%;
+  background-color:red;
 `
 
 const TitleSection = styled.View`
