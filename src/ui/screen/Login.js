@@ -8,6 +8,7 @@ import MarginVertical from "../components/MarginVertical";
 import { useNavigation } from "@react-navigation/native";
 import { useUser } from "../../hooks/useUser";
 import { useEffect, useState } from "react";
+import { useUserLoginStore } from "../../store/userStore";
 
 
 const Login = () => {
@@ -15,6 +16,7 @@ const Login = () => {
   const {handleLogin} = useUser();
   const [id, setId] = useState("");
   const [password,setPassword] = useState("");
+  const {isLogin,setIsLogin} = useUserLoginStore();
 
   useEffect(() => {
     console.log(id, password)
@@ -55,6 +57,13 @@ const Login = () => {
           <Text style={{color:colors.lightGray}}>아직 회원이 아니신가요? </Text>
           <GoToSignUp onPress={() => navigation.navigate("Signup")}>
             <GoToSignUpText>회원가입 하러가기</GoToSignUpText>
+          </GoToSignUp>
+        </View>
+        <MarginVertical margin={5}/>
+        <View style={{flexDirection:'row', width:"70%"}}>
+          <Text style={{color:colors.lightGray}}>간단한 레시피 검색만 필요하신가요?</Text>
+          <GoToSignUp onPress={() => {navigation.navigate("Tabs")}}>
+            <GoToSignUpText>비회원으로 이용하기</GoToSignUpText>
           </GoToSignUp>
         </View>
         <MarginVertical margin={55}/>
