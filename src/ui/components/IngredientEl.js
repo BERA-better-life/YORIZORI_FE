@@ -2,10 +2,13 @@ import { styled } from "styled-components"
 import { colors } from "../styles/colors"
 
 
-const IngredientEl = ({text}) => {
+const IngredientEl = ({text, id, selectedIngredientsList, setSelectedIngredientsList}) => {
   return (
-    <Body>
-      <ElTitle>{text}</ElTitle>
+    <Body 
+      onPress={() => selectedIngredientsList.includes(id) ? setSelectedIngredientsList(prev => prev.filter((el) => el !== id)) : setSelectedIngredientsList(prev => [...prev, id])}
+      isSelected={selectedIngredientsList.includes(id)}
+      >
+      <ElTitle isSelected={selectedIngredientsList.includes(id)}>{text}</ElTitle>
     </Body>
   )
 }
@@ -13,17 +16,18 @@ const IngredientEl = ({text}) => {
 export default IngredientEl
 
 const Body = styled.TouchableOpacity`
-  background-color:${colors.pointOrange};
+  background-color:${(props) => props.isSelected ? colors.pointOrange : ""};
   height:35px;
-  padding:10px;
+  padding:8px;
   border-radius:20px;
   display:flex;
   justify-content:center;
   align-items:center;
+  border: ${(props) => props.isSelected ? "none" : "1.5px solid #FFAC4A"}
 `
 
 const ElTitle = styled.Text`
-  color:#fff;
+  color:${(props) => props.isSelected ? "#fff" : colors.pointOrange};
   font-size:16px;
   font-weight:600;
 `

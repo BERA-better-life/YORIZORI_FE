@@ -1,31 +1,55 @@
 import { styled } from "styled-components"
 import { colors } from "../styles/colors"
 import MarginVertical from "./MarginVertical"
-import { Image } from "react-native"
+import { Image, ScrollView } from "react-native"
 import Feather from '@expo/vector-icons/Feather';
 import IngredientEl from "./IngredientEl";
+import { useIngredients } from "../../hooks/useIngredients";
+import { useEffect, useState } from "react";
 
-const SearchIngredients = ({text}) => {
+const SearchIngredients = ({text, selectedIngredientsList, setSelectedIngredientsList}) => {
   const ingredientsList = ["미역","오트밀","참치액","간장","참기름","참치캔","깨"]
+  const [searchInput, setSearchInput] = useState("");
+  const {getAllIngredients} = useIngredients();
+  const [allIngredientsList, setAllIngredientsList] = useState([])
+  const [searchIngredientsList, setSearchIngredientsList] = useState([])
+
+  useEffect(() => {
+    getAllIngredients(setAllIngredientsList);
+  }, [])
+
+
+  const getSearchData = (searchInput) => {
+    setSearchIngredientsList(allIngredientsList.filter((el) => el.ingredient_name.includes(searchInput)))
+  }  
+
+  useEffect(() => {
+    console.log(selectedIngredientsList)
+  }, [selectedIngredientsList])
+  
 
   return (
     <SearchBody>
       <Title>{`${text} 재료를\n선택해볼까요?`}</Title>
       <MarginVertical margin={15}/>
       <SearchBarArea>
-        <SearchBar/>
-        <SearchIcon>
+        <SearchBar value={searchInput} onChange={(e) => setSearchInput(e.nativeEvent.text)}/>
+        <SearchIcon onPress={() => getSearchData(searchInput)}>
           <Feather name="search" size={24} color={colors.pointRed} />
         </SearchIcon>
       </SearchBarArea>
       <MarginVertical margin={30}/>
-      <IngredientsArea>
-        {ingredientsList.map((el,index) => {
+      
+        <ScrollView style={{height:380}}>
+        <IngredientsArea>
+        {searchIngredientsList.map((el,index) => {
           return(
-            <IngredientEl text={el} key={index}/>
+            <IngredientEl text={el.ingredient_name} id={el.ingredient_id} key={index} selectedIngredientsList={selectedIngredientsList} setSelectedIngredientsList={setSelectedIngredientsList}/>
           )
         })}
-      </IngredientsArea>
+        </IngredientsArea>
+        </ScrollView>
+      
     </SearchBody>
   )
 }
@@ -68,6 +92,7 @@ const IngredientsArea = styled.View`
   display:flex;
   flex-direction:row;
   flex-wrap:wrap;
+  width:100%;
   gap:10px;
 `
 

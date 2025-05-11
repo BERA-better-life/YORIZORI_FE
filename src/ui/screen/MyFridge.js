@@ -26,7 +26,7 @@ const MyFridge = () => {
 
   const handleButton = () => {
     if(isDeleteMode){
-
+      
     }else{
       navigation.navigate("AddFreezerEl")
     }
@@ -70,7 +70,7 @@ const MyFridge = () => {
             </TouchableOpacity> 
           </View>
           <TouchableOpacity onPress={() => setIsDeleteMode(prev => !prev)}>
-            <FontAwesome name="trash" size={32} color={colors.fontMain} />
+            <FontAwesome name="trash" size={32} color={isDeleteMode ? colors.pointBlue : colors.fontMain} />
           </TouchableOpacity>
         </View>
         <MarginVertical margin={20}/>
@@ -121,7 +121,7 @@ const MyFridge = () => {
         </FridgeArea>
         <MarginVertical margin={50}/>
         <View style={{alignItems:'center'}}>
-          <Button text={isDeleteMode ? "재료 삭제하기":"재료 추가하기"} handleButton={() => handleButton} isValid={true}/>
+          <Button text={isDeleteMode ? "재료 삭제하기":"재료 추가하기"} handleButton={() => handleButton()} isValid={true}/>
         </View>
       </Body>
     </SafeAreaView>

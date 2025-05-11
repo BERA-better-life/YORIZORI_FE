@@ -6,13 +6,17 @@ import SearchIngredients from "../components/SearchIngredients"
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import MarginVertical from "../components/MarginVertical"
 import Button from "../components/Button"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigation } from "@react-navigation/native"
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useIngredients } from "../../hooks/useIngredients"
 
 const AddFreezerEl = () => {
   const [step, setStep] = useState(1)
   const navigation = useNavigation();
+  const [selectedIngredientsList, setSelectedIngredientsList] = useState([]);
+
+  
   const data = [['미역','2025년 4월 15일까지'],['오트밀','2026년 3월 1일까지'],["참치액","유통기한 입력 안함"]]
 
   const handleNextButton = () => {
@@ -25,6 +29,8 @@ const AddFreezerEl = () => {
       })
     }
   }
+  
+  
   return (
     <SafeAreaView style={{backgroundColor:colors.bgColor}}>
       <Body>
@@ -37,7 +43,7 @@ const AddFreezerEl = () => {
         {step === 1 ?
         <>
           <MarginVertical margin={60}/>
-          <SearchIngredients text={"냉장고에 추가하고 싶은"}/>
+          <SearchIngredients text={"냉장고에 추가하고 싶은"} selectedIngredientsList={selectedIngredientsList} setSelectedIngredientsList={setSelectedIngredientsList}/>
         </>
         :
         <>
@@ -63,7 +69,7 @@ const AddFreezerEl = () => {
         </Step2Area>
         </>}
         <View style={{position:'absolute',bottom:150}}>
-          <Button text={step===1 ? "다음단계로":"추가하기"} handleButton={handleNextButton}/>
+          <Button text={step===1 ? "다음단계로":"추가하기"} handleButton={handleNextButton} isValid={step === 1 && selectedIngredientsList.length>0 ? true : false}/>
         </View>
       </Body>
       

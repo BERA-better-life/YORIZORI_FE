@@ -5,10 +5,18 @@ import dayjs from "dayjs"
 export const useIngredients = () => {
   const today = dayjs().startOf('day')
 
-  const getAllIngredients = async() => {
+  const getAllIngredients = async(setAllIngredientsList) => {
     try {
+      const allIngredientsList = JSON.parse(await AsyncStorage.getItem("allIngredientsList"))
+      if(!allIngredientsList){
       const response = await baseUrl.get("/api/ingredients/all")
       console.log(response.data)
+      await AsyncStorage.setItem("allIngredientsList", JSON.stringify(response.data));
+      allIngredientsList = response.data
+      console.log("!")
+      }
+      setAllIngredientsList(allIngredientsList)
+      
     } catch (error) {
       console.log(error)
     }
