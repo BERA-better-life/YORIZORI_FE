@@ -7,7 +7,7 @@ const RecipeEl = ({title, url}) => {
   return (
     <RecipeElBody>
       {/* source={require(url)} */}
-      <RecipeImg />
+      <RecipeImg source={{ uri: url}}/>
       <MarginVertical margin={10}/>
       <RecipeTitle>{title}</RecipeTitle>
     </RecipeElBody>
@@ -30,7 +30,6 @@ const RecipeElBody = styled.TouchableOpacity`
 const RecipeImg = styled.Image`
   width:90%;
   height:70%;
-  background-color:red;
   border-radius:10px;
   resize-mode:contain;
 `

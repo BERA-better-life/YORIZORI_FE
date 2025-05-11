@@ -43,7 +43,7 @@ const MyFridge = () => {
     setLeftFreezerList(ingredientsList.filter((el) => {
       const targetDate = dayjs(el.expiration_date).startOf('day');
       const daysLeft = targetDate.diff(today, 'day');
-      return daysLeft > 3 
+      return daysLeft > 3 || !el.expiration_date
     }))
     setRightFreezerList(ingredientsList.filter((el) => {
       const targetDate = dayjs(el.expiration_date).startOf('day');
@@ -88,7 +88,7 @@ const MyFridge = () => {
                   :<></>}
                   <IngredientText>{el.ingredient_name}</IngredientText>
                   <MarginVertical margin={5}/>
-                  <ExpText>{el.expiration_date.slice(2)}</ExpText>
+                  <ExpText>{el.expiration_date ? el.expiration_date.slice(2) : "유통기한\n지정X"}</ExpText>
                 </IngredientEl>
               )
             })}
@@ -215,6 +215,8 @@ const IngredientText = styled.Text`
 const ExpText = styled.Text`
   font-size:12px;
   font-weight:600;
+  color:${colors.lightGray};
+  text-align:center;
 `
 
 

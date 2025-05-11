@@ -40,11 +40,11 @@ const SearchIngredients = ({text, selectedIngredientsList, setSelectedIngredient
       </SearchBarArea>
       <MarginVertical margin={30}/>
       
-        <ScrollView style={{height:380}}>
+        <ScrollView style={{height:380}} showsVerticalScrollIndicator={false}>
         <IngredientsArea>
         {searchIngredientsList.map((el,index) => {
           return(
-            <IngredientEl text={el.ingredient_name} id={el.ingredient_id} key={index} selectedIngredientsList={selectedIngredientsList} setSelectedIngredientsList={setSelectedIngredientsList}/>
+            <IngredientEl text={el.ingredient_name} id={el.ingredient_id} key={index} selectedIngredientsList={selectedIngredientsList} setSelectedIngredientsList={setSelectedIngredientsList} isTouchable={true}/>
           )
         })}
         </IngredientsArea>
@@ -81,6 +81,9 @@ const SearchBar = styled.TextInput`
   height:50px;
   border-radius:10px;
   padding:10px 20px;
+  font-weight:600;
+  font-size:16px;
+  color:${colors.fontMain};
 `
 
 const SearchIcon = styled.TouchableOpacity`
