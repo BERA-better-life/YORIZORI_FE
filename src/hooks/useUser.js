@@ -1,9 +1,11 @@
 import { useNavigation } from "@react-navigation/native"
 import { baseUrl } from "../api/baseURL"
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useUserLoginStore } from "../store/userStore";
 
-export const useUser = (email, userName, password) => {
+export const useUser = () => {
   const navigation = useNavigation();
+  const {isLogin,setIsLogin} = useUserLoginStore();
 
   const handleSignup = async(userInfo) => {
     try {
@@ -34,11 +36,13 @@ export const useUser = (email, userName, password) => {
       const {access, refresh} = response.data;
       await AsyncStorage.setItem("accessToken", access);
       await AsyncStorage.setItem("refreshToken",refresh)
+      setIsLogin()
       navigation.reset({
         routes:[{
           name:'Tabs'
         }]
       })
+
     } catch (error) {
       console.log(error)
     }

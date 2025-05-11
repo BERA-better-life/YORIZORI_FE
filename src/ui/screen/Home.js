@@ -12,25 +12,32 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useCallback, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useBookMark } from "../../hooks/useBookmark";
+import { useIngredients } from "../../hooks/useIngredients";
+import { useUserLoginStore } from "../../store/userStore";
+import GoToLoginButton from "../components/GoToLoginButton";
+import dayjs from "dayjs";
 
 const Home = () => {
   const ingredientsInfo = ['토마토','감자','우유','치즈','베이컨']
   const navigation = useNavigation();
   const {getBookmarksList} = useBookMark();
+  const {getUserIngredients} = useIngredients();
   const [bookmarkList,setBookmarkList] = useState([]);
+  const [ingredientsList, setIngredientsList] = useState([]);
+  const {isLogin,setIsLogin} = useUserLoginStore();
+  const [expIngredientsList, setExpIngredientsList] = useState([]);
+  const today = dayjs();
 
   const getToken = async() => {
     const token = await AsyncStorage.getItem("accessToken")
     console.log(token)
   }
 
-  useEffect(() => {
-    getToken()
-  }, [])
 
   useFocusEffect(
     useCallback(() => {
     getBookmarksList(setBookmarkList);
+    getUserIngredients(setIngredientsList, setExpIngredientsList, true);
     }, []),
   )
   
@@ -58,37 +65,57 @@ const Home = () => {
         <MarginVertical margin={30}/>
         <TitleSection>
           <Text>유통기한 마감 임박 재료</Text>
+          {isLogin ? 
           <ArrowIcon>
             <FontAwesome name="arrow-right" size={24} color={colors.pointRed} />
           </ArrowIcon>
+          :<></>
+          }
         </TitleSection>
         <MarginVertical margin={10}/>
+        
         <IngredientsArea horizontal={true} showsHorizontalScrollIndicator={false}>
-          {ingredientsInfo.map((el,index) =>{
+          {isLogin?
+          <>
+          {expIngredientsList.map((el,index) =>{
             return(
               <IngredientEl key={index}>
-                <Text style={{color:"#fff"}}>{el}</Text>
+                <Text style={{color:"#fff"}}>{el.ingredient_name}</Text>
               </IngredientEl>
             )
           })}
+          </>
+          :<GoToLoginButton/>
+          }
         </IngredientsArea>
         <TitleSection>
           <Text>저장해놓은 레시피</Text>
+          {isLogin ? 
           <ArrowIcon>
             <FontAwesome name="arrow-right" size={24} color={colors.pointRed} />
           </ArrowIcon>
+          :<></>
+          }
         </TitleSection>
+        {isLogin ?
         <MarginVertical margin={10}/>
+        :<></>
+        }
         <RecipesArea horizontal={true} showsHorizontalScrollIndicator={false}>
+          {isLogin ? 
+          <>
           {bookmarkList.map((el,index) => {
             return(
-              <RecipeEl key={index}>
-                <RecipeImg/>
+              <RecipeEl key={index} onPress={() => navigation.navigate("DetailRecipe",{recipeId:el.recipe_id})}>
+                <RecipeImg source={{ uri: el.recipe_image}}/>
                 <MarginVertical margin={10}/>
                 <Text style={{fontSize:15, textAlign:'center'}}>{el.recipe_title}</Text>
               </RecipeEl>
             )
           })}
+          </>
+          :<GoToLoginButton/>
+          }
         </RecipesArea>
         
       </HomeBody>
@@ -154,6 +181,7 @@ const Text = styled.Text`
   font-size:18px;
   color:${colors.fontMain};
   font-weight:600;
+  text-align:center;
 `
 
 const IngredientEl = styled.View`
@@ -180,8 +208,9 @@ const RecipeEl = styled.TouchableOpacity`
 
 const RecipeImg = styled.Image`
   width:90%;
-  height:70%;
+  height:75%;
   background-color:red;
+  border-radius:10px;
 `
 
 const TitleSection = styled.View`
@@ -192,14 +221,18 @@ const TitleSection = styled.View`
 `
 
 const IngredientsArea = styled.ScrollView`
-  height:0px;
   width:${size.width}px;
+  margin-bottom:-150px;
 `
 
 const RecipesArea = styled.ScrollView`
   width:${size.width}px;
   
 `
+
+
+
+
 
 
 

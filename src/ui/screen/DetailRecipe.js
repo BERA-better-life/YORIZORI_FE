@@ -9,11 +9,23 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import MarginVertical from "../components/MarginVertical";
 import IngredientEl from "../components/IngredientEl";
 import Button from "../components/Button";
+import { useEffect, useState } from "react";
+import { useRecipe } from "../../hooks/useRecipe";
 
-const DetailRecipe = () => {
+const DetailRecipe = ({route}) => {
   const navigation = useNavigation();
   const ingredientsArray = new Array(8).fill("토마토")
   const stepArray = ["토마토를 10분간 세척한다.","세척한 토마토를 8등분한다","썰어둔 토마토를 냄비에 넣고 15분간 끓인다", "쌀국수용 면을 10분간 끓는물에 삶는다", "조리된 토마토에 쌀국수용 육수를 섞는다", "만들어진 육수에 쌀국수면과 토핑을 넣어 완성한다"]
+  const {recipeId} = route.params;
+  const {getDetailRecipe} = useRecipe();
+  const [recipeInfo, setRecipeInfo] = useState([])
+
+  useEffect(() => {
+    getDetailRecipe(recipeId, setRecipeInfo)
+  }, [])
+
+  
+  
 
   return (
     <SafeAreaView style={{backgroundColor:colors.bgColor}}>

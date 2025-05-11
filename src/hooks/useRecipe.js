@@ -38,7 +38,7 @@ export const useRecipe = () => {
     }
   }
 
-  const getDetailRecipe = async(recipeNum) => {
+  const getDetailRecipe = async(recipeNum, setRecipeInfo) => {
     try {
       const token = await AsyncStorage.getItem("accessToken")
       const response = await baseUrl.get(`/api/recipes/recipe/${recipeNum}/`,{
@@ -47,6 +47,7 @@ export const useRecipe = () => {
         }
       })
       console.log(response.data)
+      setRecipeInfo([response.data])
     } catch (error) {
       console.log(error)
     }

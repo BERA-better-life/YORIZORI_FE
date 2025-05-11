@@ -6,7 +6,7 @@ import { colors } from '../styles/colors'
 import SearchIngredients from '../components/SearchIngredients'
 import Button from '../components/Button'
 import MarginVertical from '../components/MarginVertical'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 
 const SearchRecipe = () => {
@@ -17,6 +17,11 @@ const SearchRecipe = () => {
     if(step === 1)setStep(2)
     else{navigation.navigate("RecipeList")}
   }
+
+  useEffect(() => {
+    
+  }, [])
+  
 
 
   return (

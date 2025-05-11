@@ -1,9 +1,20 @@
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { baseUrl } from "../api/baseURL"
+import dayjs from "dayjs"
 
 export const useIngredients = () => {
+  const today = dayjs().startOf('day')
 
-  const getUserIngredients = async(setIngredientsList) => {
+  const getAllIngredients = async() => {
+    try {
+      const response = await baseUrl.get("/api/ingredients/all")
+      console.log(response.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const getUserIngredients = async(setIngredientsList, setExpIngredientsList, isExp) => {
     try {
       const token = await AsyncStorage.getItem("accessToken")
       const response = await baseUrl.get("/api/ingredients/user-ingredients",{
@@ -13,6 +24,16 @@ export const useIngredients = () => {
       })
       console.log(response.data)
       setIngredientsList(response.data)
+      if(isExp){
+        const expIngredientsList = response.data.filter((el) => {
+          const targetDate = dayjs(el.expiration_date).startOf('day');
+          const daysLeft = targetDate.diff(today, 'day');
+          console.log(targetDate.diff(today, 'day'))
+          return daysLeft >= 0 && daysLeft <= 3
+        })
+        console.log("exp",expIngredientsList)
+        setExpIngredientsList(expIngredientsList)
+      }
     } catch (error) {
       console.log(error)
     }
@@ -22,7 +43,7 @@ export const useIngredients = () => {
     try {
       const token = await AsyncStorage.getItem("accessToken")
       const response = await baseUrl.post("/api/ingredients/user-ingredients",{
-        ingredients_id:ingredientsId,
+        ingredient_id:ingredientsId,
         expiration_date:expDate
       },{
         headers:{
@@ -68,6 +89,7 @@ export const useIngredients = () => {
 
   
   return {
+    getAllIngredients,
     addUserIngredients,
     getUserIngredients,
     deleteUserIngredients,
