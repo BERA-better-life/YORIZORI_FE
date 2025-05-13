@@ -1,9 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { baseUrl } from "../api/baseURL"
 import dayjs from "dayjs"
+import { useNavigation } from "@react-navigation/native"
 
 export const useIngredients = () => {
   const today = dayjs().startOf('day')
+  const navigation = useNavigation();
 
   const getAllIngredients = async(setAllIngredientsList) => {
     try {
@@ -47,20 +49,29 @@ export const useIngredients = () => {
     }
   }
 
-  const addUserIngredients = async(ingredientsId, expDate) => {
+  const addUserIngredients = async(ingredientsList) => {
     try {
       const token = await AsyncStorage.getItem("accessToken")
-      const response = await baseUrl.post("/api/ingredients/user-ingredients",{
-        ingredient_id:ingredientsId,
-        expiration_date:expDate
-      },{
+      const response = await baseUrl.post("/api/ingredients/user-ingredients",[
+        ...ingredientsList
+      ],{
         headers:{
           Authorization:`Bearer ${token}`
         }
       })
-      console.log(response)
+      console.log(response.data)
+      console.log(ingredientsList)
+      // navigation.reset({
+      //   routes:[{
+      //     name:'MyFridge'
+      //   }]
+      // })
+      navigation.navigate('Tabs', {screen:"MyFridge"})
+
     } catch (error) {
       console.log(error)
+      console.log(ingredientsList)
+      
     }
   }
 

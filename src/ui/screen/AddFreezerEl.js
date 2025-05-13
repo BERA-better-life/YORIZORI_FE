@@ -15,18 +15,12 @@ const AddFreezerEl = () => {
   const [step, setStep] = useState(1)
   const navigation = useNavigation();
   const [selectedIngredientsList, setSelectedIngredientsList] = useState([]);
-
-  
-  const data = [['미역','2025년 4월 15일까지'],['오트밀','2026년 3월 1일까지'],["참치액","유통기한 입력 안함"]]
+  const {addUserIngredients} = useIngredients();
 
   const handleNextButton = () => {
     if(step === 1)setStep(prev => prev+1)
     else{
-      navigation.reset({
-        routes:[{
-          name:'Tabs'
-        }]
-      })
+      addUserIngredients(selectedIngredientsList.map((el) => ({ingredient_id : el.ingredient_id, ...(el.expiration_date && {expiration_date: el.expiration_date})})))
     }
   }
   
@@ -43,7 +37,7 @@ const AddFreezerEl = () => {
         {step === 1 ?
         <>
           <MarginVertical margin={60}/>
-          <SearchIngredients text={"냉장고에 추가하고 싶은"} selectedIngredientsList={selectedIngredientsList} setSelectedIngredientsList={setSelectedIngredientsList}/>
+          <SearchIngredients text={"냉장고에 추가하고 싶은"} selectedIngredientsList={selectedIngredientsList} setSelectedIngredientsList={setSelectedIngredientsList} version={"freezer"}/>
         </>
         :
         <>
@@ -53,14 +47,14 @@ const AddFreezerEl = () => {
         </View>
         <MarginVertical margin={40}/>
         <Step2Area>
-          {data.map((el,index) =>{
+          {selectedIngredientsList.map((el,index) =>{
             return(
               <ExpirationDateEl key={index}>
                 <View style={{gap:5}}>
-                  <IngredientTitle>{el[0]}</IngredientTitle>
-                  <ExpirationText>{el[1]}</ExpirationText>
+                  <IngredientTitle>{el.ingredient_name}</IngredientTitle>
+                  <ExpirationText>{el.expiration_date ? el.expiration_date : "유통기한을 설정해주세요"}</ExpirationText>
                 </View>
-                <TouchableOpacity onPress={() => navigation.navigate("PickExpDate")}>
+                <TouchableOpacity onPress={() => navigation.navigate("PickExpDate",{ingredientName:el.ingredient_name, ingredientId:el.ingredient_id, setSelectedIngredientsList:setSelectedIngredientsList})}>
                   <Ionicons name="settings-sharp" size={24} color={colors.pointRed} />
                 </TouchableOpacity>
               </ExpirationDateEl>
@@ -69,7 +63,7 @@ const AddFreezerEl = () => {
         </Step2Area>
         </>}
         <View style={{position:'absolute',bottom:150}}>
-          <Button text={step===1 ? "다음단계로":"추가하기"} handleButton={handleNextButton} isValid={step === 1 && selectedIngredientsList.length>0 ? true : false}/>
+          <Button text={step===1 ? "다음단계로":"추가하기"} handleButton={handleNextButton} isValid={(step===1&&selectedIngredientsList.length > 0) || step===2 ? true : false}/>
         </View>
       </Body>
       

@@ -2,15 +2,23 @@ import { styled } from "styled-components"
 import { colors } from "../styles/colors"
 
 
-const IngredientEl = ({text, id, selectedIngredientsList, setSelectedIngredientsList, isTouchable}) => {
+const IngredientEl = ({text, id, selectedIngredientsList, setSelectedIngredientsList, isTouchable, version}) => {
   return (
     <>
     {isTouchable ?
     <Body 
-      onPress={() => selectedIngredientsList.includes(id) ? setSelectedIngredientsList(prev => prev.filter((el) => el !== id)) : setSelectedIngredientsList(prev => [...prev, id])}
-      isSelected={selectedIngredientsList.includes(id)}
+      onPress={() => 
+      {if(version === "freezer"){
+        selectedIngredientsList.filter((el) => el.ingredient_id === id)?.length === 1 ? setSelectedIngredientsList(prev => prev.filter((el) => el.ingredient_id !== id)) 
+        : setSelectedIngredientsList(prev => [...prev, {ingredient_id:id, ingredient_name:text}])
+      }else{
+        selectedIngredientsList.includes(id) ? setSelectedIngredientsList(prev => prev.filter((el) => el !== id)) : setSelectedIngredientsList(prev => [...prev, id])
+      }
+      }}
+      
+      isSelected={selectedIngredientsList.filter((el) => el.ingredient_id === id)?.length === 1}
       >
-      <ElTitle isSelected={selectedIngredientsList.includes(id)}>{text}</ElTitle>
+      <ElTitle isSelected={selectedIngredientsList.filter((el) => el.ingredient_id === id)?.length === 1}>{text}</ElTitle>
     </Body>
     :
     <NotTouchableBody>

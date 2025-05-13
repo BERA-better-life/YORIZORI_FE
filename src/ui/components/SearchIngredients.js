@@ -7,7 +7,7 @@ import IngredientEl from "./IngredientEl";
 import { useIngredients } from "../../hooks/useIngredients";
 import { useEffect, useState } from "react";
 
-const SearchIngredients = ({text, selectedIngredientsList, setSelectedIngredientsList}) => {
+const SearchIngredients = ({text, selectedIngredientsList, setSelectedIngredientsList, version}) => {
   const ingredientsList = ["미역","오트밀","참치액","간장","참기름","참치캔","깨"]
   const [searchInput, setSearchInput] = useState("");
   const {getAllIngredients} = useIngredients();
@@ -44,7 +44,7 @@ const SearchIngredients = ({text, selectedIngredientsList, setSelectedIngredient
         <IngredientsArea>
         {searchIngredientsList.map((el,index) => {
           return(
-            <IngredientEl text={el.ingredient_name} id={el.ingredient_id} key={index} selectedIngredientsList={selectedIngredientsList} setSelectedIngredientsList={setSelectedIngredientsList} isTouchable={true}/>
+            <IngredientEl text={el.ingredient_name} id={el.ingredient_id} key={index} selectedIngredientsList={selectedIngredientsList} setSelectedIngredientsList={setSelectedIngredientsList} isTouchable={true} version={version}/>
           )
         })}
         </IngredientsArea>

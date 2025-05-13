@@ -25,20 +25,40 @@ const MyFridge = () => {
   const [isDeleteMode, setIsDeleteMode] = useState(false);
   const {deleteUserIngredients} = useIngredients();
 
-  const handleButton = () => {
-    if(isDeleteMode){
-      deleteUserIngredients(deleteList)
-      setIsDeleteMode(false)
-    }else{
-      navigation.navigate("AddFreezerEl")
+  const handleButton = async () => {
+    if (isDeleteMode) {
+      try {
+        // 1) 삭제 요청
+        await deleteUserIngredients(deleteList);
+  
+        // 2) 삭제 모드 해제 및 선택 리스트 초기화
+        setIsDeleteMode(false);
+        setDeleteList([]);
+  
+        // 3) 다시 목록 불러오기 (새로고침 효과)
+        await getUserIngredients(setIngredientsList);
+      } catch (error) {
+        console.error('삭제 중 에러:', error);
+      }
+    } else {
+      navigation.navigate("AddFreezerEl");
     }
-  }
+  };
+  
   
 
   useFocusEffect(
     useCallback(() => {
     getUserIngredients(setIngredientsList)
     }, [isDeleteMode]),
+  )
+
+
+  useFocusEffect(
+    useCallback(() => {
+      setIsDeleteMode(false);
+      setDeleteList([])
+    },[])
   )
 
   useEffect(() => {
@@ -52,9 +72,10 @@ const MyFridge = () => {
       const daysLeft = targetDate.diff(today, 'day');
       return daysLeft <= 3 
     }))
-    setIsDeleteMode(false);
-    setDeleteList([])
+    
   }, [ingredientsList])
+
+
 
   useEffect(() => {
     console.log(deleteList)
