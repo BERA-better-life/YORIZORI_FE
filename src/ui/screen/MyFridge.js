@@ -1,4 +1,4 @@
-import { Image, SafeAreaView, TouchableOpacity, View } from "react-native"
+import { Image, SafeAreaView, ScrollView, TouchableOpacity, View } from "react-native"
 import { colors } from "../styles/colors"
 import { styled } from "styled-components"
 import { size } from "../styles/size"
@@ -7,20 +7,80 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Button from "../components/Button"
 import MarginVertical from "../components/MarginVertical"
 import { useFocusEffect, useNavigation } from "@react-navigation/native"
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useIngredients } from "../../hooks/useIngredients"
+import dayjs from "dayjs"
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 const MyFridge = () => {
   const ingredientsArray = new Array(10).fill("")
   const navigation = useNavigation();
   const {getUserIngredients} = useIngredients();
   const [ingredientsList, setIngredientsList] = useState([]);
+  const [rightFreezerList, setRightFreezerList] = useState([]);
+  const [leftFreezerList, setLeftFreezerList] = useState([]);
+  const today = dayjs().startOf('day');
+  const [deleteList, setDeleteList] = useState([]);
+  const [isDeleteMode, setIsDeleteMode] = useState(false);
+  const {deleteUserIngredients} = useIngredients();
+
+  const handleButton = async () => {
+    if (isDeleteMode) {
+      try {
+        // 1) 삭제 요청
+        await deleteUserIngredients(deleteList);
+  
+        // 2) 삭제 모드 해제 및 선택 리스트 초기화
+        setIsDeleteMode(false);
+        setDeleteList([]);
+  
+        // 3) 다시 목록 불러오기 (새로고침 효과)
+        await getUserIngredients(setIngredientsList);
+      } catch (error) {
+        console.error('삭제 중 에러:', error);
+      }
+    } else {
+      navigation.navigate("AddFreezerEl");
+    }
+  };
+  
+  
 
   useFocusEffect(
     useCallback(() => {
     getUserIngredients(setIngredientsList)
-    }, []),
+    }, [isDeleteMode]),
   )
+
+
+  useFocusEffect(
+    useCallback(() => {
+      setIsDeleteMode(false);
+      setDeleteList([])
+    },[])
+  )
+
+  useEffect(() => {
+    setLeftFreezerList(ingredientsList.filter((el) => {
+      const targetDate = dayjs(el.expiration_date).startOf('day');
+      const daysLeft = targetDate.diff(today, 'day');
+      return daysLeft > 3 || !el.expiration_date
+    }))
+    setRightFreezerList(ingredientsList.filter((el) => {
+      const targetDate = dayjs(el.expiration_date).startOf('day');
+      const daysLeft = targetDate.diff(today, 'day');
+      return daysLeft <= 3 
+    }))
+    
+  }, [ingredientsList])
+
+
+
+  useEffect(() => {
+    console.log(deleteList)
+  },[deleteList])
+  
 
 
   return (
@@ -37,36 +97,59 @@ const MyFridge = () => {
             <Image source={cart_icon} style={{width:32, height:32}}/>
             </TouchableOpacity> 
           </View>
-          <TouchableOpacity>
-            <FontAwesome name="trash" size={32} color={colors.fontMain} />
+          <TouchableOpacity onPress={() => setIsDeleteMode(prev => !prev)}>
+            <FontAwesome name="trash" size={32} color={isDeleteMode ? colors.pointBlue : colors.fontMain} />
           </TouchableOpacity>
         </View>
         <MarginVertical margin={20}/>
         <FridgeArea>
           <FridgeBody>
-            <FridgeLeftHandle/>
-            {ingredientsList.map((el,index) => {
+            <ScrollView showsVerticalScrollIndicator={false}>
+            
+            {leftFreezerList.map((el,index) => {
               return(
                 <IngredientEl key={index}>
-                  <IngredientText>{el.ingredient_id}</IngredientText>
+                  {isDeleteMode ? 
+                  <TouchableOpacity style={{width:120}} onPress={() => setDeleteList(prev => deleteList.includes(el.user_ingredient_id) ? deleteList.filter((item) => item !== el.user_ingredient_id) : [...prev, el.user_ingredient_id])}>
+                    <AntDesign name={deleteList.includes(el.user_ingredient_id) ? "closecircle" : "closecircleo"} size={24} color={colors.pointBlue} style={{position:'absolute', top:-30, left:0}}/>
+                  </TouchableOpacity>
+                  :<></>}
+                  <IngredientText>{el.ingredient_name}</IngredientText>
+                  <MarginVertical margin={5}/>
+                  <ExpText>{el.expiration_date ? el.expiration_date.slice(2) : "유통기한\n지정X"}</ExpText>
                 </IngredientEl>
               )
             })}
+            </ScrollView>
+            <FridgeLeftHandle/>
           </FridgeBody>
           <FridgeBody>
-            <FridgeRightHandle/>
-            {ingredientsArray.map((el,index) => {
+            <ScrollView showsVerticalScrollIndicator={false}>
+            
+            {rightFreezerList.map((el,index) => {
               return(
                 <IngredientEl key={index}>
-                  <IngredientText>{el}</IngredientText>
+                  {isDeleteMode ? 
+                  <TouchableOpacity style={{width:120, zIndex:3}} onPress={() => setDeleteList(prev => deleteList.includes(el.user_ingredient_id) ? deleteList.filter((item) => item !== el.user_ingredient_id) : [...prev, el.user_ingredient_id])}>
+                    <AntDesign name={deleteList.includes(el.user_ingredient_id) ? "closecircle" : "closecircleo"} size={24} color={colors.pointBlue} style={{position:'absolute', top:-30, left:0, zIndex:3}}/>
+                  </TouchableOpacity>
+                  :<></>}
+                  <View style={{flexDirection:'row', alignItems:'center'}}>
+                    <MaterialCommunityIcons name="exclamation-thick" size={24} color={colors.pointRed} />
+                    <IngredientText>{el.ingredient_name}</IngredientText>
+                  </View>
+                  <MarginVertical margin={5}/>
+                  <ExpText style={{color:colors.pointRed}}>{el.expiration_date.slice(2)}</ExpText>
                 </IngredientEl>
               )
             })}
+            </ScrollView>
+            <FridgeRightHandle/>
           </FridgeBody>
         </FridgeArea>
         <MarginVertical margin={50}/>
         <View style={{alignItems:'center'}}>
-          <Button text={"재료 추가하기"} handleButton={() => navigation.navigate("AddFreezerEl")} isValid={true}/>
+          <Button text={isDeleteMode ? "재료 삭제하기":"재료 추가하기"} handleButton={() => handleButton()} isValid={true}/>
         </View>
       </Body>
     </SafeAreaView>
@@ -110,10 +193,9 @@ const FridgeBody = styled.View`
   display:flex;
   justify-content:center;
   align-items:center;
-  gap:10px;
   flex-direction:row;
   flex-wrap:wrap;
-  padding:5px;
+  padding:10px 5px;
 `
 
 const FridgeLeftHandle = styled.View`
@@ -138,15 +220,31 @@ const FridgeRightHandle = styled.View`
 
 
 const IngredientEl = styled.View`
-  width:60px;
   padding:10px;
   background-color:#fff;
-  border-radius:10px;
+  border-radius:20px;
   margin-bottom:20px;
+  margin-left:30px;
+  width:90px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin-top:10px;
+  
 `
 
 const IngredientText = styled.Text`
+  text-align:center;
+  font-size:14px;
+  font-weight:600;
+  color:${colors.fontMain};
+`
 
+const ExpText = styled.Text`
+  font-size:12px;
+  font-weight:600;
+  color:${colors.lightGray};
+  text-align:center;
 `
 
 

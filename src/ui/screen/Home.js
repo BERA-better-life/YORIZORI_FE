@@ -58,7 +58,7 @@ const Home = () => {
         <GoToRecipeArea>
           <Image source={cutlery_icon} style={{width:40, height:40}}/>
           <Text style={{flexGrow:1}}>레시피 검색하러 가기</Text>
-          <ArrowIcon>
+          <ArrowIcon onPress={() => navigation.navigate("Search")}>
             <FontAwesome name="arrow-right" size={24} color={colors.pointRed} />
           </ArrowIcon>
         </GoToRecipeArea>
@@ -209,7 +209,6 @@ const RecipeEl = styled.TouchableOpacity`
 const RecipeImg = styled.Image`
   width:90%;
   height:75%;
-  background-color:red;
   border-radius:10px;
 `
 

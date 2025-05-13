@@ -12,13 +12,15 @@ import Button from "../components/Button";
 
 
 
-const PickExpDate = () => {
+const PickExpDate = ({route}) => {
   const [currentDate, setCurrentDate] = useState(dayjs())
   const navigation = useNavigation();
   const [selectedDate, setSelectedDate] = useState(dayjs())
+  const {ingredientName, ingredientId, setSelectedIngredientsList} = route.params
 
   useEffect(() => {
     console.log(selectedDate)
+    setSelectedIngredientsList(prev => [...prev.filter((el) => el.ingredient_id !== ingredientId),{ingredient_id:ingredientId, ingredient_name:ingredientName, expiration_date:selectedDate.format("YYYY-MM-DD")}])
   }, [selectedDate])
   
 
@@ -34,7 +36,7 @@ const PickExpDate = () => {
         <MarginVertical margin={60}/>
         <View style={{alignItems:'flex-start', width:"90%"}}>
           <View style={{flexDirection:'row', alignItems:'flex-start',justifyContent:'flex-start'}}>
-            <CategoryTitle style={{color:colors.pointRed}}>토마토 </CategoryTitle>
+            <CategoryTitle style={{color:colors.pointRed}}>{ingredientName}</CategoryTitle>
             <CategoryTitle>{"의 유통기한을"}</CategoryTitle>
           </View>
           <CategoryTitle>{"입력해주세요"}</CategoryTitle>
@@ -44,7 +46,7 @@ const PickExpDate = () => {
           <Calendar selectedDate={selectedDate} setSelectedDate={setSelectedDate}/>
         </CalandarArea>
         <View style={{position:'absolute', bottom:150}}>
-          <Button text={"설정하기"} handleButton={() => navigation.goBack()}/>
+          <Button text={"설정하기"} handleButton={() => navigation.goBack()} isValid={true}/>
         </View>
       </Body>
     </SafeAreaView>

@@ -2,28 +2,59 @@ import { styled } from "styled-components"
 import { colors } from "../styles/colors"
 
 
-const IngredientEl = ({text}) => {
+const IngredientEl = ({text, id, selectedIngredientsList, setSelectedIngredientsList, isTouchable, version}) => {
   return (
-    <Body>
-      <ElTitle>{text}</ElTitle>
+    <>
+    {isTouchable ?
+    <Body 
+      onPress={() => 
+      {if(version === "freezer"){
+        selectedIngredientsList.filter((el) => el.ingredient_id === id)?.length === 1 ? setSelectedIngredientsList(prev => prev.filter((el) => el.ingredient_id !== id)) 
+        : setSelectedIngredientsList(prev => [...prev, {ingredient_id:id, ingredient_name:text}])
+      }else{
+        selectedIngredientsList.includes(id) ? setSelectedIngredientsList(prev => prev.filter((el) => el !== id)) : setSelectedIngredientsList(prev => [...prev, id])
+      }
+      }}
+      
+      isSelected={selectedIngredientsList.filter((el) => el.ingredient_id === id)?.length === 1}
+      >
+      <ElTitle isSelected={selectedIngredientsList.filter((el) => el.ingredient_id === id)?.length === 1}>{text}</ElTitle>
     </Body>
+    :
+    <NotTouchableBody>
+      <ElTitle style={{color:"#fff"}}>{text}</ElTitle>
+    </NotTouchableBody>
+    }
+    </>
   )
 }
 
 export default IngredientEl
 
 const Body = styled.TouchableOpacity`
-  background-color:${colors.pointOrange};
+  background-color:${(props) => props.isSelected ? colors.pointOrange : ""};
   height:35px;
-  padding:10px;
+  padding:8px;
   border-radius:20px;
   display:flex;
   justify-content:center;
   align-items:center;
+  border: ${(props) => props.isSelected ? "none" : "1.5px solid #FFAC4A"}
+`
+
+const NotTouchableBody = styled.View`
+  background-color:${colors.pointOrange};
+  height:35px;
+  padding:8px;
+  border-radius:20px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+ 
 `
 
 const ElTitle = styled.Text`
-  color:#fff;
+  color:${(props) => props.isSelected ? "#fff" : colors.pointOrange};
   font-size:16px;
   font-weight:600;
 `

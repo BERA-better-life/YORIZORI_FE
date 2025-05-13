@@ -14,7 +14,6 @@ import { useRecipe } from '../../hooks/useRecipe'
 
 
 const MarketRecommand = () => {
-  const ingredientsArray = ["토마토","토마토","토마토","토마토","토마토","토마토"]
   const navigation = useNavigation();
   const recipeArray = new Array(5).fill(false);
   const {getCartRecommend} = useIngredients();
@@ -44,24 +43,25 @@ const MarketRecommand = () => {
           </TouchableOpacity>
         <Text style={{color:colors.lightGray}}>장보기 추천</Text>
         </Header>
+        <MarginVertical margin={10}/>
         <Title>{"요리조리 님의 냉장고를 기반으로\n장 볼 재료들을 추천해드릴게요!"}</Title>
         <MarketArea>
           <Image source={cartImg} style={{width:380,height:380, position:'absolute', top:0}}/>
           <View style={{flexDirection:'row', flexWrap:'wrap', width:300, height:300, justifyContent:'center',alignItems:'center', gap:10, marginTop:170}}>
           {ingredients.map((el,index) => {
             return(
-              <IngredientEl text={el} key={index}/>
+              <IngredientEl text={el} key={index} isTouchable={false}/>
             )
           })}
           </View>
         </MarketArea>
-        <Text style={{color:colors.fontMain}}>{"추천 재료들을 구입하면\n이런 요리들을 해볼 수 있어요!"}</Text>
+        <Text style={{color:colors.fontMain, marginTop:-70}}>{"추천 재료들을 구입하면\n이런 요리들을 해볼 수 있어요!"}</Text>
         <MarginVertical margin={20}/>
         <RecipeArea>
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
             {recipeList.map((el,index) => {
               return(
-                <RecipeEl key={index} text={el.recipe_title}/>
+                <RecipeEl key={index} title={el.rcp_name} url={el.rcp_picture}/>
               )
             })}
           </ScrollView>
