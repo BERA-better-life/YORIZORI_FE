@@ -23,10 +23,12 @@ const MyFridge = () => {
   const today = dayjs().startOf('day');
   const [deleteList, setDeleteList] = useState([]);
   const [isDeleteMode, setIsDeleteMode] = useState(false);
+  const {deleteUserIngredients} = useIngredients();
 
   const handleButton = () => {
     if(isDeleteMode){
-      
+      deleteUserIngredients(deleteList)
+      setIsDeleteMode(false)
     }else{
       navigation.navigate("AddFreezerEl")
     }
@@ -36,7 +38,7 @@ const MyFridge = () => {
   useFocusEffect(
     useCallback(() => {
     getUserIngredients(setIngredientsList)
-    }, []),
+    }, [isDeleteMode]),
   )
 
   useEffect(() => {
@@ -50,8 +52,13 @@ const MyFridge = () => {
       const daysLeft = targetDate.diff(today, 'day');
       return daysLeft <= 3 
     }))
+    setIsDeleteMode(false);
+    setDeleteList([])
   }, [ingredientsList])
 
+  useEffect(() => {
+    console.log(deleteList)
+  },[deleteList])
   
 
 
@@ -82,8 +89,8 @@ const MyFridge = () => {
               return(
                 <IngredientEl key={index}>
                   {isDeleteMode ? 
-                  <TouchableOpacity style={{width:120}} onPress={() => setDeleteList(prev => deleteList.includes(el.ingredient_id) ? deleteList.filter((item) => item !== el.ingredient_id) : [...prev, el.ingredient_id])}>
-                    <AntDesign name={deleteList.includes(el.ingredient_id) ? "closecircle" : "closecircleo"} size={24} color={colors.pointBlue} style={{position:'absolute', top:-30, left:0}}/>
+                  <TouchableOpacity style={{width:120}} onPress={() => setDeleteList(prev => deleteList.includes(el.user_ingredient_id) ? deleteList.filter((item) => item !== el.user_ingredient_id) : [...prev, el.user_ingredient_id])}>
+                    <AntDesign name={deleteList.includes(el.user_ingredient_id) ? "closecircle" : "closecircleo"} size={24} color={colors.pointBlue} style={{position:'absolute', top:-30, left:0}}/>
                   </TouchableOpacity>
                   :<></>}
                   <IngredientText>{el.ingredient_name}</IngredientText>
@@ -102,8 +109,8 @@ const MyFridge = () => {
               return(
                 <IngredientEl key={index}>
                   {isDeleteMode ? 
-                  <TouchableOpacity style={{width:120, zIndex:3}} onPress={() => setDeleteList(prev => deleteList.includes(el.ingredient_id) ? deleteList.filter((item) => item !== el.ingredient_id) : [...prev, el.ingredient_id])}>
-                    <AntDesign name={deleteList.includes(el.ingredient_id) ? "closecircle" : "closecircleo"} size={24} color={colors.pointBlue} style={{position:'absolute', top:-30, left:0, zIndex:3}}/>
+                  <TouchableOpacity style={{width:120, zIndex:3}} onPress={() => setDeleteList(prev => deleteList.includes(el.user_ingredient_id) ? deleteList.filter((item) => item !== el.user_ingredient_id) : [...prev, el.user_ingredient_id])}>
+                    <AntDesign name={deleteList.includes(el.user_ingredient_id) ? "closecircle" : "closecircleo"} size={24} color={colors.pointBlue} style={{position:'absolute', top:-30, left:0, zIndex:3}}/>
                   </TouchableOpacity>
                   :<></>}
                   <View style={{flexDirection:'row', alignItems:'center'}}>

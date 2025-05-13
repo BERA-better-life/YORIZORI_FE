@@ -64,15 +64,19 @@ export const useIngredients = () => {
     }
   }
 
-  const deleteUserIngredients = async(ingredientsId) => {
+  const deleteUserIngredients = async(ingredientsIdList) => {
     try {
       const token = await AsyncStorage.getItem("accessToken")
-      const response = await baseUrl.delete(`/api/ingredients/user-ingredients/${ingredientsId}`,
+      const response = await baseUrl.delete(`/api/ingredients/user-ingredients`,
       {
-        headers:{
-          Authorization:`Bearer ${token}`
-        }
-      })
+        // DELETE 바디는 data 속성으로
+        data: { user_ingredient_ids: ingredientsIdList },
+        // 헤더도 같은 객체 안에
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+      )
       console.log(response.data)
     } catch (error) {
       console.log(error)
