@@ -12,6 +12,8 @@ import { useIngredients } from "../../hooks/useIngredients"
 import dayjs from "dayjs"
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { useUserLoginStore } from "../../store/userStore"
+import GoToLoginButton from "../components/GoToLoginButton"
 
 const MyFridge = () => {
   const ingredientsArray = new Array(10).fill("")
@@ -24,6 +26,7 @@ const MyFridge = () => {
   const [deleteList, setDeleteList] = useState([]);
   const [isDeleteMode, setIsDeleteMode] = useState(false);
   const {deleteUserIngredients} = useIngredients();
+  const {isLogin} = useUserLoginStore();
 
   const handleButton = async () => {
     if (isDeleteMode) {
@@ -49,13 +52,16 @@ const MyFridge = () => {
 
   useFocusEffect(
     useCallback(() => {
+    if(isLogin){
     getUserIngredients(setIngredientsList)
+    }
     }, [isDeleteMode]),
   )
 
 
   useFocusEffect(
     useCallback(() => {
+      
       setIsDeleteMode(false);
       setDeleteList([])
     },[])
@@ -84,6 +90,7 @@ const MyFridge = () => {
 
 
   return (
+    
     <SafeAreaView style={{backgroundColor:colors.bgColor}}>
       <Body>
         <Header>
@@ -152,6 +159,16 @@ const MyFridge = () => {
           <Button text={isDeleteMode ? "재료 삭제하기":"재료 추가하기"} handleButton={() => handleButton()} isValid={true}/>
         </View>
       </Body>
+      {isLogin ? <></> :
+      <View style={{position:'absolute', top:0, left:0}}>
+        <View style={{width:size.width, height:size.height, backgroundColor:"#fff", opacity:.7, position:'absolute', top:0, left:0, zIndex:9, display:"flex",
+        justifyContent:"center", alignItems:"center"}}>
+          
+        </View>
+        <View style={{zIndex:10, width:size.width, height:size.height, display:'flex', justifyContent:'center', alignItems:'center'}}>
+        <GoToLoginButton/>
+        </View>
+      </View>}
     </SafeAreaView>
   )
 }
