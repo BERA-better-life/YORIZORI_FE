@@ -1,4 +1,4 @@
-import { SafeAreaView, ScrollView, TouchableOpacity, View } from "react-native"
+import { Image, SafeAreaView, ScrollView, TouchableOpacity, View } from "react-native"
 import { styled } from "styled-components"
 import { colors } from "../styles/colors"
 import { size } from "../styles/size"
@@ -8,15 +8,25 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MarginVertical from "../components/MarginVertical";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useUserLoginStore } from "../../store/userStore";
+import GoToLoginButton from "../components/GoToLoginButton";
 
 
-const RecipeList = () => {
+const RecipeList = ({route}) => {
   const navigation = useNavigation();
   const [showDropDown, setShowDropDown] = useState(false);
   const recipeArray = ["버섯수프", "토마토 스파게티", "닭볶음탕", "토마토달걀덮밥", "오이무침", "잔치국수"]
   const categoryArray = ["인기순", "난이도순", "재료순"]
   const [selectedSort, setSelectedSort] = useState("");
+  const {recipeList} = route.params
+  const {isLogin, setIsLogin} = useUserLoginStore();
+
+  useEffect(() => {
+    console.log(recipeList)
+    console.log(isLogin)
+  }, [])
+  
 
   return (
     <SafeAreaView style={{backgroundColor:colors.bgColor}}>
@@ -49,21 +59,28 @@ const RecipeList = () => {
         <MarginVertical margin={20}/>
           <ScrollView showsVerticalScrollIndicator={false}>
           <RecipeArea>
-            {recipeArray.map((el,index) => {
+            {recipeList.map((el,index) => {
               return(
-                <RecipeEl key={index} onPress={() => navigation.navigate("DetailRecipe")}>
+                <RecipeEl key={index} onPress={() => navigation.navigate("DetailRecipe", {recipeId:el.rcp_number})}>
                   <RecipeImg>
+                    {el.rcp_picture ?
+                    <Image source={{ uri: el.rcp_picture}} style={{width:"90%", height:"70%", resizeMode:'contain', borderRadius:10}}/>:
                     <MaterialIcons name="image-not-supported" size={40} color="black" />
+                    }
                   </RecipeImg>
-                  <RecipeTitle>{el}</RecipeTitle>
+                  <RecipeTitle>{el.rcp_name}</RecipeTitle>
                   <MarginVertical margin={10}/>
                   <ButtonArea>
+                    {isLogin ? 
+                    <>
                     <ButtonEl>
-                      <Ionicons name="heart-sharp" size={24} color={colors.pointRed} />
+                      <Ionicons name="heart-outline" size={24} color={colors.pointRed} />
                     </ButtonEl>
                     <ButtonEl>
                       <MaterialIcons name="save-alt" size={24} color={colors.fontMain} />
                     </ButtonEl>
+                    </>
+                    :<></>}
                   </ButtonArea>
                 </RecipeEl>
               )

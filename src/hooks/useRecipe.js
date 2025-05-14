@@ -1,7 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { baseUrl } from "../api/baseURL"
+import { useNavigation } from "@react-navigation/native"
 
 export const useRecipe = () => {
+  const navigation = useNavigation();
 
   const handleSearchRecipeForUser = async(ingredientsText,sortMethod) => {
     try {
@@ -20,7 +22,7 @@ export const useRecipe = () => {
     }
   }
 
-  const handleSearchRecipeForNonUser = async(ingredientsText, excludedIngredientsText,setRecipeList) => {
+  const handleSearchRecipeForNonUser = async(ingredientsText, excludedIngredientsText,setRecipeList, version) => {
     try {
       const token = await AsyncStorage.getItem("accessToken")
       const response = await baseUrl.post("/api/recipes/recommend/exclude/",{
@@ -32,6 +34,9 @@ export const useRecipe = () => {
         }
       })
       console.log(response.data)
+      if(version !== "cart"){
+        navigation.navigate("RecipeList", {recipeList :response.data})
+      }
       setRecipeList(response.data)
     } catch (error) {
       

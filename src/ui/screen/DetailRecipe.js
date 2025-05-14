@@ -1,4 +1,4 @@
-import { SafeAreaView, ScrollView, TouchableOpacity, View } from "react-native"
+import { Image, SafeAreaView, ScrollView, TouchableOpacity, View } from "react-native"
 import { styled } from "styled-components"
 import { colors } from "../styles/colors"
 import { size } from "../styles/size"
@@ -11,6 +11,10 @@ import IngredientEl from "../components/IngredientEl";
 import Button from "../components/Button";
 import { useEffect, useState } from "react";
 import { useRecipe } from "../../hooks/useRecipe";
+import { useBookMark } from "../../hooks/useBookmark";
+import { useLike } from "../../hooks/useLike";
+import { useUserLoginStore } from "../../store/userStore";
+import GoToLoginButton from "../components/GoToLoginButton";
 
 const DetailRecipe = ({route}) => {
   const navigation = useNavigation();
@@ -19,10 +23,21 @@ const DetailRecipe = ({route}) => {
   const {recipeId} = route.params;
   const {getDetailRecipe} = useRecipe();
   const [recipeInfo, setRecipeInfo] = useState([])
+  const withoutLabels =/\[[^\]]+\]/g
+  const {handleBookmarksList} = useBookMark();
+  const {handleLikeList} = useLike();
+  const {isLogin, setIsLogin} = useUserLoginStore();
 
   useEffect(() => {
     getDetailRecipe(recipeId, setRecipeInfo)
+    console.log(recipeId)
   }, [])
+
+  
+
+  
+
+  
 
   
   
@@ -41,37 +56,43 @@ const DetailRecipe = ({route}) => {
         </Header>
         <MarginVertical margin={30}/>
         <View style={{flexDirection:'row', justifyContent:'space-between'}}>
-          <RecipeTitle>토마토 쌀국수</RecipeTitle>
+          <RecipeTitle>{recipeInfo[0]?.rcp_name}</RecipeTitle>
           <ButtonArea>
-            <ButtonEl>
+            {isLogin ?
+            <>
+            <ButtonEl onPress={() => handleLikeList(recipeInfo[0].rcp_number)}>
               <Ionicons name="heart-outline" size={24} color={colors.pointRed} />
             </ButtonEl>
-            <ButtonEl>
+            <ButtonEl onPress={() => handleBookmarksList(recipeInfo[0].rcp_number)}>
               <MaterialIcons name="save-alt" size={24} color={colors.fontMain} />
             </ButtonEl>
+            </>
+            :<CateogryText style={{textAlign:'right'}}>{"레시피를 저장하려면\n로그인이 필요해요"}</CateogryText>}
           </ButtonArea>
         </View>
         <MarginVertical margin={30}/>
         <ContentsEl>
           <CateogryText>재료</CateogryText>
+          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
           <View style={{flexDirection:'row', flexWrap:'wrap', gap:7}}>
-            {ingredientsArray.map((el,index) => {
+            {recipeInfo[0]?.rcp_ingredient.replace(withoutLabels,'').split('|').map(item => item.trim()).filter(item => item.length > 0).map((el,index) => {
               return(
                 <IngredientEl text={el} key={index}/>
               )
             })}
           </View>
+          </ScrollView>
         </ContentsEl>
         <MarginVertical margin={20}/>
         <ContentsEl>
           <CateogryText>소요시간</CateogryText>
-          <CateogryText>30분</CateogryText>
+          <CateogryText>{recipeInfo[0]?.rcp_cooktime}분</CateogryText>
         </ContentsEl>
         <MarginVertical margin={20}/>
         <CateogryText>조리과정</CateogryText>
         <MarginVertical margin={20}/>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-          {stepArray.map((el,index) => {
+          {recipeInfo[0]?.steps.map((el,index) => {
             return(
               <RecipeStepArea key={index}>
                 <RecipeStepNum>
@@ -79,22 +100,22 @@ const DetailRecipe = ({route}) => {
                 </RecipeStepNum>
                 <RecipeStepEl>
                   <RecipeStepImg>
-
+                    <Image source={{uri:el?.image_url}} style={{width:'100%', height:"100%", resizeMode:'contain', borderRadius:10}}/>
                   </RecipeStepImg>
                   <RecipeContentsText>
-                    {el}
+                    {el?.instruction}
                   </RecipeContentsText>
                 </RecipeStepEl>
               </RecipeStepArea>
             )
           })}
         </ScrollView>
-        <MarginVertical margin={20}/>
+        <MarginVertical margin={50}/>
         <View style={{width:'100%', alignItems:'center'}}>
-          <Button text={"다른 레시피 보러가기"} handleButton={() => navigation.goBack()}/>
+          <Button text={"다른 레시피 보러가기"} handleButton={() => navigation.goBack()} isValid={true}/>
         </View>
         </ScrollView>
-        <MarginVertical margin={20}/>
+        <MarginVertical margin={100}/>
       </Body>
     </SafeAreaView>
   )
@@ -105,7 +126,7 @@ export default DetailRecipe
 
 const Body = styled.View`
   width:${size.width}px;
-  min-height:${size.height}px;
+  height:${size.height}px;
   background-color:${colors.bgColor};
   padding:0 40px;
 `
