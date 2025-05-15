@@ -22,7 +22,7 @@ export const useLike = () => {
   const handleLikeList = async(recipeNum) => {
     try {
       const token = await AsyncStorage.getItem("accessToken")
-      const response = await baseUrl.post(`/api/favorite/likes/${recipeNum}`,{
+      const response = await baseUrl.post(`/api/favorite/likes/${recipeNum}`,{},{
         headers:{
           Authorization:`Bearer ${token}`
         }
@@ -30,6 +30,7 @@ export const useLike = () => {
       console.log(response.data)
     } catch (error) {
       console.log(error)
+      
     }
   }
 

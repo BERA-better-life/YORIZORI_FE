@@ -21,7 +21,7 @@ export const useBookMark = () => {
   const handleBookmarksList = async(recipeNum) => {
     try {
       const token = await AsyncStorage.getItem("accessToken")
-      const response = await baseUrl.post(`/api/favorite/bookmarks/${recipeNum}`,{
+      const response = await baseUrl.post(`/api/favorite/bookmarks/${recipeNum}`,{},{
         headers:{
           Authorization:`Bearer ${token}`
         }

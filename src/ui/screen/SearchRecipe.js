@@ -24,7 +24,7 @@ const SearchRecipe = () => {
 
   useFocusEffect(
     useCallback(() => {
-    setExcludedIngredientsList([])
+    setSelectedIngredientsList([])
     setExcludedIngredientsList([])
     setStep(1)
     }, []),

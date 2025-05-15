@@ -215,12 +215,13 @@ const TitleSection = styled.View`
 `
 
 const IngredientsArea = styled.ScrollView`
-  width:${size.width}px;
+  width:100%;
+  backgroudn-color:red;
   margin-bottom:-150px;
 `
 
 const RecipesArea = styled.ScrollView`
-  width:${size.width}px;
+  width:100%px;
   
 `
 

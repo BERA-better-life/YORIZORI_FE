@@ -33,7 +33,7 @@ const RecipeImg = styled.Image`
   width:90%;
   height:70%;
   border-radius:10px;
-  resize-mode:contain;
+  
 `
 
 const RecipeTitle = styled.Text`

@@ -68,7 +68,7 @@ export const useUser = () => {
   const handleLogout = async() => {
     try {
       const token = await AsyncStorage.getItem("accessToken")
-      const response = await baseUrl.post(`/api/users/logout`,{
+      const response = await baseUrl.post(`/api/users/logout`,{},{
         headers:{
           Authorization:`Bearer ${token}`
         }

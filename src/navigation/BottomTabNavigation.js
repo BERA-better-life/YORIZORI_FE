@@ -9,13 +9,14 @@ import SearchRecipe from "../ui/screen/SearchRecipe";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import MyPage from "../ui/screen/MyPage";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { useUserLoginStore } from "../store/userStore";
+import RecipeList from "../ui/screen/RecipeList";
 
 
 const Tab = createBottomTabNavigator();
 
 const BottomTabNavigation = () => {
-
-
+  const {isLogin} = useUserLoginStore();
 
   return (
     <Tab.Navigator screenOptions={({route}) => ({
@@ -56,10 +57,10 @@ const BottomTabNavigation = () => {
       <Tab.Screen name="REPORT" component={Statistic}/>
       <Tab.Screen name="MY" component={MyPage} /> */}
       <Tab.Screen name="MyFridge" component={MyFridge}/>
-      <Tab.Screen name="Search" component={SearchRecipe}/>
+      <Tab.Screen name="Search" component={isLogin ? RecipeList : SearchRecipe}/>
       <Tab.Screen name="MyPage" component={MyPage}/>
     </Tab.Navigator>
   )
 }
 
-export default BottomTabNavigation
+export default BottomTabNavigation 

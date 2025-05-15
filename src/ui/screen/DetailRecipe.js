@@ -15,6 +15,7 @@ import { useBookMark } from "../../hooks/useBookmark";
 import { useLike } from "../../hooks/useLike";
 import { useUserLoginStore } from "../../store/userStore";
 import GoToLoginButton from "../components/GoToLoginButton";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 const DetailRecipe = ({route}) => {
   const navigation = useNavigation();
@@ -24,15 +25,32 @@ const DetailRecipe = ({route}) => {
   const {getDetailRecipe} = useRecipe();
   const [recipeInfo, setRecipeInfo] = useState([])
   const withoutLabels =/\[[^\]]+\]/g
-  const {handleBookmarksList} = useBookMark();
-  const {handleLikeList} = useLike();
+  const {handleBookmarksList, getBookmarksList} = useBookMark();
+  const {handleLikeList, getLikeList} = useLike();
   const {isLogin, setIsLogin} = useUserLoginStore();
+  const [likeList, setLikeList] = useState([])
+  const [isLike, setIsLike] = useState(false)
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [bookmarkList, setBookmarkList] = useState([]);
 
   useEffect(() => {
-    getDetailRecipe(recipeId, setRecipeInfo)
-    console.log(recipeId)
-  }, [])
+    getDetailRecipe(recipeId, setRecipeInfo);
+    getLikeList(setLikeList);
+    getBookmarksList(setBookmarkList);
+  }, []);
 
+  // 2) likeList or recipeInfo 바뀔 때만 isLike 재계산
+  useEffect(() => {
+    const id = recipeInfo[0]?.rcp_number;
+    setIsLike(likeList.some(el => el.recipe_id === id));
+  }, [likeList, recipeInfo]);
+
+  useEffect(() => {
+    const id = recipeInfo[0]?.rcp_number;
+    setIsBookmarked(bookmarkList.some(el => el.recipe_id === id));
+  }, [bookmarkList, recipeInfo]);
+
+  
   
 
   
@@ -60,11 +78,11 @@ const DetailRecipe = ({route}) => {
           <ButtonArea>
             {isLogin ?
             <>
-            <ButtonEl onPress={() => handleLikeList(recipeInfo[0].rcp_number)}>
-              <Ionicons name="heart-outline" size={24} color={colors.pointRed} />
+            <ButtonEl onPress={() => {handleLikeList(recipeInfo[0].rcp_number);setIsLike(prev => !prev)}}>
+              <Ionicons name={!isLike?"heart-outline":"heart-sharp"} size={24} color={colors.pointRed} />
             </ButtonEl>
-            <ButtonEl onPress={() => handleBookmarksList(recipeInfo[0].rcp_number)}>
-              <MaterialIcons name="save-alt" size={24} color={colors.fontMain} />
+            <ButtonEl onPress={() => {handleBookmarksList(recipeInfo[0].rcp_number);setIsBookmarked(prev => !prev)}}>
+              <MaterialCommunityIcons name={isBookmarked ? "plus-circle" : 'plus-circle-outline'} size={24} color={colors.fontMain} />
             </ButtonEl>
             </>
             :<CateogryText style={{textAlign:'right'}}>{"레시피를 저장하려면\n로그인이 필요해요"}</CateogryText>}

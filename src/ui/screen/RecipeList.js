@@ -3,29 +3,76 @@ import { styled } from "styled-components"
 import { colors } from "../styles/colors"
 import { size } from "../styles/size"
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MarginVertical from "../components/MarginVertical";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useUserLoginStore } from "../../store/userStore";
 import GoToLoginButton from "../components/GoToLoginButton";
+import { useRecipe } from "../../hooks/useRecipe";
+import { useIngredients } from "../../hooks/useIngredients";
+import { useLike } from "../../hooks/useLike";
+import { useBookMark } from "../../hooks/useBookmark";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+
 
 
 const RecipeList = ({route}) => {
   const navigation = useNavigation();
   const [showDropDown, setShowDropDown] = useState(false);
   const recipeArray = ["버섯수프", "토마토 스파게티", "닭볶음탕", "토마토달걀덮밥", "오이무침", "잔치국수"]
-  const categoryArray = ["인기순", "난이도순", "재료순"]
+  const categoryArray = ["인기순", "시간순", "재료순"]
   const [selectedSort, setSelectedSort] = useState("");
-  const {recipeList} = route.params
   const {isLogin, setIsLogin} = useUserLoginStore();
+  const [recipeList, setRecipeList] = useState(isLogin ? [] : route.params.recipeList)
+  const {handleSearchRecipeForNonUser, handleSearchRecipeForUser} = useRecipe()
+  const {getUserIngredients} = useIngredients();
+  const [userIngredientsList, setUserIngredientsList] = useState([])
+  const {getLikeList, handleLikeList} = useLike();
+  const {getBookmarksList, handleBookmarksList} = useBookMark();
+  const [likeList, setLikeList] = useState([])
+  const [bookmarkList, setBookmarkList] = useState([])
+  
 
+  
   useEffect(() => {
     console.log(recipeList)
     console.log(isLogin)
+    if(isLogin){
+      getUserIngredients(setUserIngredientsList,"",false)
+      
+    }
   }, [])
+
+  useFocusEffect(
+    useCallback(() => {
+    getLikeList(setLikeList)
+    getBookmarksList(setBookmarkList)
+    }, []),
+  )
+
+  useEffect(() => {
+    if(isLogin){handleSearchRecipeForUser(userIngredientsList.map((el) => el.ingredient_name).join(", "),setRecipeList)}
+  },[userIngredientsList])
+
+  useEffect(() => {
+    console.log(selectedSort)
+  },[selectedSort])
+
+  useEffect(() => {
+    if(!isLogin){
+    if(selectedSort === "시간순"){
+      handleSearchRecipeForNonUser(route.params.ingredientsText, route.params.excludedIngredientsText, setRecipeList,"", "rcp_cooktime_desc")
+    }else if(selectedSort === "인기순"){
+      setRecipeList(prev => prev.sort((a,b) => b.rcp_cooktime - a.rcp_cooktime))
+    }else if(selectedSort === ""){
+      setRecipeList(route.params.recipeList);
+    }
+    }
+  },[selectedSort])
+
   
 
   return (
@@ -47,8 +94,8 @@ const RecipeList = ({route}) => {
           <DropDownBody>
             {categoryArray.map((el,index) => {
               return(
-                <DropDownEl key={index} onPress={() => {setSelectedSort(el);setShowDropDown(false)}}>
-                  <DropDownText>{el}</DropDownText>
+                <DropDownEl key={index} onPress={() => {setSelectedSort(prev => prev.length === 0 ? el : "");setShowDropDown(false)}}>
+                  <DropDownText style={{color:selectedSort === el ? colors.pointRed : colors.fontMain}}>{el}</DropDownText>
                 </DropDownEl>
               )
             })}
@@ -64,7 +111,7 @@ const RecipeList = ({route}) => {
                 <RecipeEl key={index} onPress={() => navigation.navigate("DetailRecipe", {recipeId:el.rcp_number})}>
                   <RecipeImg>
                     {el.rcp_picture ?
-                    <Image source={{ uri: el.rcp_picture}} style={{width:"90%", height:"70%", resizeMode:'contain', borderRadius:10}}/>:
+                    <Image source={{ uri: el.rcp_picture}} style={{width:"90%", height:"70%", borderRadius:10}}/>:
                     <MaterialIcons name="image-not-supported" size={40} color="black" />
                     }
                   </RecipeImg>
@@ -73,11 +120,11 @@ const RecipeList = ({route}) => {
                   <ButtonArea>
                     {isLogin ? 
                     <>
-                    <ButtonEl>
-                      <Ionicons name="heart-outline" size={24} color={colors.pointRed} />
+                    <ButtonEl >
+                      <Ionicons name={likeList.some((item) => item.recipe_id === el.rcp_number) ? "heart-sharp":"heart-outline"} size={24} color={colors.pointRed} />
                     </ButtonEl>
-                    <ButtonEl>
-                      <MaterialIcons name="save-alt" size={24} color={colors.fontMain} />
+                    <ButtonEl >
+                    <MaterialCommunityIcons name={bookmarkList.some((item) => item.recipe_id === el.rcp_number) ? "plus-circle" : 'plus-circle-outline'} size={24} color={colors.fontMain} />
                     </ButtonEl>
                     </>
                     :<></>}
@@ -156,7 +203,7 @@ const ButtonArea = styled.View`
   gap:5px;
 `
 
-const ButtonEl = styled.TouchableOpacity`
+const ButtonEl = styled.View`
 
 `
 
