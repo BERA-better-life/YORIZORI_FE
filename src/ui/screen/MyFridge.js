@@ -87,6 +87,13 @@ const MyFridge = () => {
     console.log(deleteList)
   },[deleteList])
   
+  const checkExpToColor = (date) => {
+    if(!date)return null
+    const target = dayjs(date).startOf('day');
+    const daysLeft = target.diff(today, 'day');
+    return daysLeft > 30 ? colors.pointBlue : daysLeft > 7 ? "#FFDB49" : colors.pointOrange
+
+  }
 
 
   return (
@@ -121,7 +128,10 @@ const MyFridge = () => {
                     <AntDesign name={deleteList.includes(el.user_ingredient_id) ? "closecircle" : "closecircleo"} size={24} color={colors.pointBlue} style={{position:'absolute', top:-30, left:0}}/>
                   </TouchableOpacity>
                   :<></>}
-                  <IngredientText>{el.ingredient_name}</IngredientText>
+                  <View style={{flexDirection:'row', gap:7, alignItems:'center'}}>
+                    <AlertCircle style={{backgroundColor:checkExpToColor(el.expiration_date)}} />
+                    <IngredientText>{el.ingredient_name}</IngredientText>
+                  </View>
                   <MarginVertical margin={5}/>
                   <ExpText>{el.expiration_date ? el.expiration_date.slice(2) : "유통기한\n지정X"}</ExpText>
                 </IngredientEl>
@@ -264,5 +274,10 @@ const ExpText = styled.Text`
   text-align:center;
 `
 
+const AlertCircle = styled.View`
+  width:12px;
+  height:12px;
+  border-radius:50%;
+`
 
 
