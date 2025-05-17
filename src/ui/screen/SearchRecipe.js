@@ -6,16 +6,37 @@ import { colors } from '../styles/colors'
 import SearchIngredients from '../components/SearchIngredients'
 import Button from '../components/Button'
 import MarginVertical from '../components/MarginVertical'
-import { useEffect, useState } from 'react'
-import { useNavigation } from '@react-navigation/native'
+import { use, useCallback, useEffect, useState } from 'react'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import { useRecipe } from '../../hooks/useRecipe'
 
 const SearchRecipe = () => {
   const [step, setStep] = useState(1);
   const navigation = useNavigation();
+  const [selectedIngredientsList, setSelectedIngredientsList] = useState([])
+  const [excludedIngredientsList, setExcludedIngredientsList] = useState([])
+  const [recipeList, setRecipeList] = useState([])
+  const {handleSearchRecipeForNonUser} = useRecipe();
+
+  useEffect(() => {
+    console.log(selectedIngredientsList, excludedIngredientsList)
+  }, [selectedIngredientsList, excludedIngredientsList])
+
+  useFocusEffect(
+    useCallback(() => {
+    setSelectedIngredientsList([])
+    setExcludedIngredientsList([])
+    setStep(1)
+    }, []),
+  )
+  
+
   
   const handleNextButton = () => {
     if(step === 1)setStep(2)
-    else{navigation.navigate("RecipeList")}
+    else{
+      handleSearchRecipeForNonUser(selectedIngredientsList.join(", "), excludedIngredientsList.join(", "), setRecipeList)
+    }
   }
 
   useEffect(() => {
@@ -41,9 +62,9 @@ const SearchRecipe = () => {
           </StepEl>
         </StepArea>
         <MarginVertical margin={25}/>
-        <SearchIngredients text={step === 1 ? "원하는" : "제외하고 싶은"}/>
+        <SearchIngredients text={step === 1 ? "원하는" : "제외하고 싶은"} version={step===1?"select" : "exclude"} setSelectedIngredientsList={setSelectedIngredientsList} setExcludedIngredientsList={setExcludedIngredientsList} selectedIngredientsList={selectedIngredientsList} excludedIngredientsList={excludedIngredientsList} step={step}/>
         <View style={{position:'absolute', bottom:200, width:size.width, alignItems:'center'}}>
-          <Button text={step === 1 ? "다음단계로" : "검색하기"} handleButton={handleNextButton}/>
+          <Button text={step === 1 ? "다음단계로" : "검색하기"} handleButton={handleNextButton} isValid={step === 1 && selectedIngredientsList.length > 0 ? true : step === 2 ? true : false }/>
         </View>
       </Body>
     </SafeAreaView>

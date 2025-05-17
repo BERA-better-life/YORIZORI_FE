@@ -2,7 +2,7 @@ import { styled } from "styled-components"
 import { colors } from "../styles/colors"
 
 
-const IngredientEl = ({text, id, selectedIngredientsList, setSelectedIngredientsList, isTouchable, version}) => {
+const IngredientEl = ({text, id, selectedIngredientsList, setSelectedIngredientsList, isTouchable, version, excludedIngredientsList, setExcludedIngredientsList}) => {
   return (
     <>
     {isTouchable ?
@@ -11,14 +11,16 @@ const IngredientEl = ({text, id, selectedIngredientsList, setSelectedIngredients
       {if(version === "freezer"){
         selectedIngredientsList.filter((el) => el.ingredient_id === id)?.length === 1 ? setSelectedIngredientsList(prev => prev.filter((el) => el.ingredient_id !== id)) 
         : setSelectedIngredientsList(prev => [...prev, {ingredient_id:id, ingredient_name:text}])
-      }else{
-        selectedIngredientsList.includes(id) ? setSelectedIngredientsList(prev => prev.filter((el) => el !== id)) : setSelectedIngredientsList(prev => [...prev, id])
+      }else if(version === "select"){
+        selectedIngredientsList.includes(text) ? setSelectedIngredientsList(prev => prev.filter((el) => el !== text)) : setSelectedIngredientsList(prev => [...prev, text])
+      }else if(version === "exclude"){
+        excludedIngredientsList.includes(text) ? setExcludedIngredientsList(prev => prev.filter((el) => el !== text)) : setExcludedIngredientsList(prev => [...prev, text])
       }
       }}
       
-      isSelected={selectedIngredientsList.filter((el) => el.ingredient_id === id)?.length === 1}
+      isSelected={version === "exclude" ? excludedIngredientsList.filter((el) => el === text)?.length === 1 : version === "select" ? selectedIngredientsList.filter((el) => el === text)?.length === 1 : selectedIngredientsList.filter((el) => el.ingredient_id === id)?.length === 1}
       >
-      <ElTitle isSelected={selectedIngredientsList.filter((el) => el.ingredient_id === id)?.length === 1}>{text}</ElTitle>
+      <ElTitle isSelected={version === "exclude" ? excludedIngredientsList.filter((el) => el === text)?.length === 1 : version === "select" ? selectedIngredientsList.filter((el) => el === text)?.length === 1 : selectedIngredientsList.filter((el) => el.ingredient_id === id)?.length === 1}>{text}</ElTitle>
     </Body>
     :
     <NotTouchableBody>

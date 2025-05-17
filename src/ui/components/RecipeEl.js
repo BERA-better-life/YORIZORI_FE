@@ -2,10 +2,12 @@ import React from 'react'
 import { styled } from 'styled-components'
 import { colors } from '../styles/colors'
 import MarginVertical from './MarginVertical'
+import { useNavigation } from '@react-navigation/native'
 
-const RecipeEl = ({title, url}) => {
+const RecipeEl = ({title, url, id}) => {
+  const navigation = useNavigation();
   return (
-    <RecipeElBody>
+    <RecipeElBody onPress={() => navigation.navigate("DetailRecipe", {recipeId:id})}>
       {/* source={require(url)} */}
       <RecipeImg source={{ uri: url}}/>
       <MarginVertical margin={10}/>
@@ -31,7 +33,7 @@ const RecipeImg = styled.Image`
   width:90%;
   height:70%;
   border-radius:10px;
-  resize-mode:contain;
+  
 `
 
 const RecipeTitle = styled.Text`

@@ -28,7 +28,7 @@ const MarketRecommand = () => {
   )
 
   useEffect(() => {
-    handleSearchRecipeForNonUser(ingredients.join(", "),"",setRecipeList)
+    handleSearchRecipeForNonUser(ingredients.join(", "),"",setRecipeList,"cart")
   }, [ingredients])
   
   
@@ -61,7 +61,7 @@ const MarketRecommand = () => {
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
             {recipeList.map((el,index) => {
               return(
-                <RecipeEl key={index} title={el.rcp_name} url={el.rcp_picture}/>
+                <RecipeEl key={index} title={el.rcp_name} url={el.rcp_picture} id={el.rcp_number}/>
               )
             })}
           </ScrollView>

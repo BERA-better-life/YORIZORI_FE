@@ -7,7 +7,7 @@ import IngredientEl from "./IngredientEl";
 import { useIngredients } from "../../hooks/useIngredients";
 import { useEffect, useState } from "react";
 
-const SearchIngredients = ({text, selectedIngredientsList, setSelectedIngredientsList, version}) => {
+const SearchIngredients = ({text, selectedIngredientsList, setSelectedIngredientsList, version, excludedIngredientsList, setExcludedIngredientsList, step}) => {
   const ingredientsList = ["미역","오트밀","참치액","간장","참기름","참치캔","깨"]
   const [searchInput, setSearchInput] = useState("");
   const {getAllIngredients} = useIngredients();
@@ -21,7 +21,13 @@ const SearchIngredients = ({text, selectedIngredientsList, setSelectedIngredient
 
   const getSearchData = (searchInput) => {
     setSearchIngredientsList(allIngredientsList.filter((el) => el.ingredient_name.includes(searchInput)))
-  }  
+  }
+
+  useEffect(() => {
+    setSearchInput("")
+  },[step])
+  
+  
 
   useEffect(() => {
     console.log(selectedIngredientsList)
@@ -40,11 +46,20 @@ const SearchIngredients = ({text, selectedIngredientsList, setSelectedIngredient
       </SearchBarArea>
       <MarginVertical margin={30}/>
       
-        <ScrollView style={{height:380}} showsVerticalScrollIndicator={false}>
+        <ScrollView style={{height: version === "select" || version === "exclude" ? 280 : 380}} showsVerticalScrollIndicator={false}>
         <IngredientsArea>
         {searchIngredientsList.map((el,index) => {
           return(
-            <IngredientEl text={el.ingredient_name} id={el.ingredient_id} key={index} selectedIngredientsList={selectedIngredientsList} setSelectedIngredientsList={setSelectedIngredientsList} isTouchable={true} version={version}/>
+            <IngredientEl
+              text={el.ingredient_name} 
+              id={el.ingredient_id} 
+              key={index} 
+              selectedIngredientsList={selectedIngredientsList} 
+              setSelectedIngredientsList={setSelectedIngredientsList} 
+              isTouchable={true} 
+              setExcludedIngredientsList={setExcludedIngredientsList}
+              excludedIngredientsList={excludedIngredientsList}
+              version={version}/>
           )
         })}
         </IngredientsArea>

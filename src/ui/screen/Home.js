@@ -50,9 +50,11 @@ const Home = () => {
         <MarginVertical margin={10}/>
         <Header>
           <LogoImg source={logo}/>
+          {isLogin ?
           <AlertIcon onPress={() => navigation.navigate("Notification")}>
             <Image source={notification_icon} style={{height:35, width:35}}/>
           </AlertIcon>
+          :<></>}
         </Header>
         <MarginVertical margin={25}/>
         <GoToRecipeArea>
@@ -66,7 +68,7 @@ const Home = () => {
         <TitleSection>
           <Text>유통기한 마감 임박 재료</Text>
           {isLogin ? 
-          <ArrowIcon>
+          <ArrowIcon onPress={() => navigation.navigate("MyFridge")}>
             <FontAwesome name="arrow-right" size={24} color={colors.pointRed} />
           </ArrowIcon>
           :<></>
@@ -90,15 +92,10 @@ const Home = () => {
         </IngredientsArea>
         <TitleSection>
           <Text>저장해놓은 레시피</Text>
-          {isLogin ? 
-          <ArrowIcon>
-            <FontAwesome name="arrow-right" size={24} color={colors.pointRed} />
-          </ArrowIcon>
-          :<></>
-          }
+          
         </TitleSection>
         {isLogin ?
-        <MarginVertical margin={10}/>
+        <MarginVertical margin={20}/>
         :<></>
         }
         <RecipesArea horizontal={true} showsHorizontalScrollIndicator={false}>
@@ -220,12 +217,13 @@ const TitleSection = styled.View`
 `
 
 const IngredientsArea = styled.ScrollView`
-  width:${size.width}px;
+  width:100%;
+  backgroudn-color:red;
   margin-bottom:-150px;
 `
 
 const RecipesArea = styled.ScrollView`
-  width:${size.width}px;
+  width:100%px;
   
 `
 

@@ -96,7 +96,7 @@ const MyPage = () => {
             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
             {likeList.map((el,index) => {
               return(
-                <RecipeEl key={index} title={el.recipe_title} url={el.recipe_image}>
+                <RecipeEl key={index} title={el.recipe_title} url={el.recipe_image} id={el.recipe_number}>
                   
                 </RecipeEl>
               )
