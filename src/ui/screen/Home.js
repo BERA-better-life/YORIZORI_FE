@@ -50,9 +50,11 @@ const Home = () => {
         <MarginVertical margin={10}/>
         <Header>
           <LogoImg source={logo}/>
+          {isLogin ?
           <AlertIcon onPress={() => navigation.navigate("Notification")}>
             <Image source={notification_icon} style={{height:35, width:35}}/>
           </AlertIcon>
+          :<></>}
         </Header>
         <MarginVertical margin={25}/>
         <GoToRecipeArea>
