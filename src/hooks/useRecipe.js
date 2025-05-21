@@ -5,17 +5,20 @@ import { useNavigation } from "@react-navigation/native"
 export const useRecipe = () => {
   const navigation = useNavigation();
 
-  const handleSearchRecipeForUser = async(ingredientsText,setRecipeList, sort) => {
+  const handleSearchRecipeForUser = async(setRecipeList, sort, keyword, type) => {
     try {
       const token = await AsyncStorage.getItem("accessToken")
       const response = await baseUrl.post("/api/recipes/recommend/",{
-        ingredients:ingredientsText,
-        ...(sort != null && { sort_by: sort })
+        
+        sort_by: sort,
+        rcp_keyword: keyword,
+        rcp_type: type
       },{
         headers:{
           Authorization:`Bearer ${token}`
         }
       })
+      console.log(sort,keyword, type)
       console.log(response.data)
       setRecipeList(response.data)
     } catch (error) {
@@ -23,14 +26,16 @@ export const useRecipe = () => {
     }
   }
 
-  const handleSearchRecipeForNonUser = async(ingredientsText, excludedIngredientsText,setRecipeList, version, sort) => {
+  const handleSearchRecipeForNonUser = async(ingredientsText, excludedIngredientsText,setRecipeList, version, sort,keyword,type) => {
     try {
       
       const token = await AsyncStorage.getItem("accessToken")
       const response = await baseUrl.post("/api/recipes/recommend/exclude/",{
         ingredients:ingredientsText,
         excluded_ingredients: excludedIngredientsText,
-        ...(sort != null && { sort_by: sort })
+        sort_by: sort,
+        rcp_keyword: keyword,
+        rcp_type: type
       },{
         headers:{
           Authorization:`Bearer ${token}`

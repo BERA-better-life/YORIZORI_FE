@@ -77,6 +77,7 @@ export const useUser = () => {
         }
       })
       console.log(response.data)
+      setIsLogin()
       navigation.reset({
         routes:[{
           name:'Login'
