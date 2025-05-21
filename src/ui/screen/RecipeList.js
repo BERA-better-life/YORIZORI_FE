@@ -22,8 +22,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 const RecipeList = ({route}) => {
   const navigation = useNavigation();
   const [showDropDown, setShowDropDown] = useState(false);
-  const recipeArray = ["버섯수프", "토마토 스파게티", "닭볶음탕", "토마토달걀덮밥", "오이무침", "잔치국수"]
-  const categoryArray = ["인기순", "시간순", "재료순"]
+  const sortArray = ["짧은 조리시간순", "긴 조리시간순", "적은 필요재료순","많은 필요재료순","많은 좋아요순","적은 좋아요순"]
   const [selectedSort, setSelectedSort] = useState("");
   const {isLogin, setIsLogin} = useUserLoginStore();
   const [recipeList, setRecipeList] = useState(isLogin ? [] : route.params.recipeList)
@@ -34,6 +33,10 @@ const RecipeList = ({route}) => {
   const {getBookmarksList, handleBookmarksList} = useBookMark();
   const [likeList, setLikeList] = useState([])
   const [bookmarkList, setBookmarkList] = useState([])
+  const keywordArr = ["간식","도시락","다이어트","명절","손님접대","술안주","야식","영양식","이유식","일상","초스피드","해장","기타"]
+  const typeArr = ["과자","국/탕","김치/젓갈/장류", "디저트","메인반찬","면/만두","밑반찬","밥/죽/떡","빵","샐러드","스프","양념/소스/잼","양식","찌개","차/음료/술","퓨전","기타"]
+  const [keyword, setKeyword] = useState([])
+  const [type, setType] = useState([])
   
 
   
@@ -53,25 +56,24 @@ const RecipeList = ({route}) => {
     }, []),
   )
 
-  useEffect(() => {
-    if(isLogin){handleSearchRecipeForUser(userIngredientsList.map((el) => el.ingredient_name).join(", "),setRecipeList)}
-  },[userIngredientsList])
+  useFocusEffect(
+    useCallback(() => {
+    if(isLogin){handleSearchRecipeForUser(setRecipeList)}
+    },[]),
+)
 
   useEffect(() => {
     console.log(selectedSort)
-  },[selectedSort])
+  },[selectedSort, keyword, type])
 
   useEffect(() => {
+    var sort = selectedSort === "짧은 조리시간순" ? "rcp_cooktime_asc" : selectedSort === "긴 조리시간순" ? "rcp_cooktime_desc" : selectedSort === "적은 필요재료순" ? "rcp_ingredient_cnt_asc" : selectedSort === "많은 필요재료순" ? "rcp_ingredient_cnt_desc" : selectedSort === "많은 좋아요순" ? "likes_desc" : "likes_asc"
     if(!isLogin){
-    if(selectedSort === "시간순"){
-      handleSearchRecipeForNonUser(route.params.ingredientsText, route.params.excludedIngredientsText, setRecipeList,"", "rcp_cooktime_desc")
-    }else if(selectedSort === "인기순"){
-      setRecipeList(prev => prev.sort((a,b) => b.rcp_cooktime - a.rcp_cooktime))
-    }else if(selectedSort === ""){
-      setRecipeList(route.params.recipeList);
+      handleSearchRecipeForNonUser(route.params.ingredientsText, route.params.excludedIngredientsText,setRecipeList,"",sort, keyword, type)
+    }else{
+      handleSearchRecipeForUser(setRecipeList, sort, keyword, type)
     }
-    }
-  },[selectedSort])
+  },[selectedSort, type, keyword])
 
   
 
@@ -92,19 +94,51 @@ const RecipeList = ({route}) => {
           </TouchableOpacity>
           {showDropDown ?
           <DropDownBody>
-            {categoryArray.map((el,index) => {
+            <ScrollView showsVerticalScrollIndicator={false}>
+            {sortArray.map((el,index) => {
               return(
-                <DropDownEl key={index} onPress={() => {setSelectedSort(prev => prev.length === 0 ? el : "");setShowDropDown(false)}}>
+                <DropDownEl key={index} onPress={() => {setSelectedSort(prev => prev === el? "" : el);setShowDropDown(false)}}>
                   <DropDownText style={{color:selectedSort === el ? colors.pointRed : colors.fontMain}}>{el}</DropDownText>
                 </DropDownEl>
               )
             })}
-            
+            </ScrollView>
           </DropDownBody>
           :<></>}
         </View>
         <MarginVertical margin={20}/>
-          <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+        <CategoryTitle>키워드별</CategoryTitle>
+        <MarginVertical margin={8}/>
+          <CategoryArea>
+            {keywordArr.map((el,index)=> {
+              return(
+                <CategoryEl 
+                  key={index} 
+                  onPress={() => keyword.includes(el) ? setKeyword(keyword.filter((item) => item !== el)) : setKeyword(prev => [...prev, el])}
+                  isSelected={keyword.includes(el)}
+                >
+                  <CategoryText isSelected={keyword.includes(el)}>{el}</CategoryText>
+                </CategoryEl>
+              )
+            })}
+          </CategoryArea>
+          <MarginVertical margin={15}/>
+        <CategoryTitle>레시피 타입별</CategoryTitle>
+        <MarginVertical margin={8}/>
+          <CategoryArea>
+          {typeArr.map((el,index)=> {
+              return(
+                <CategoryEl 
+                  key={index}
+                  onPress={() => type.includes(el) ? setType(type.filter((item) => item !== el)) : setType(prev => [...prev, el])}
+                  isSelected={type.includes(el)}>
+                  <CategoryText isSelected={type.includes(el)}>{el}</CategoryText>
+                </CategoryEl>
+              )
+            })}
+          </CategoryArea>
+          <MarginVertical margin={15}/>
           <RecipeArea>
             {recipeList.map((el,index) => {
               return(
@@ -132,9 +166,11 @@ const RecipeList = ({route}) => {
                 </RecipeEl>
               )
             })}
+            <MarginVertical margin={180}/>
             </RecipeArea>
+            
           </ScrollView>
-        <MarginVertical margin={100}/>
+
       </Body>
     </SafeAreaView>
   )
@@ -209,12 +245,13 @@ const ButtonEl = styled.View`
 
 const DropDownBody = styled.View`
   width:40%;
+  height:150px;
   background-color:#fff;
   border-radius:10px;
   position:absolute;
   right:0;
-  bottom:-140px;
   z-index:2;
+  top:30px;
 `
 
 const DropDownEl = styled.TouchableOpacity`
@@ -229,4 +266,31 @@ const DropDownText = styled.Text`
   font-size:16px;
   font-weight:500;
   color:${colors.fontMain};
+`
+
+const CategoryArea = styled.View`
+  display:flex;
+  flex-direction:row;
+  flex-wrap:wrap;
+  gap:5px;
+`
+
+const CategoryEl = styled.TouchableOpacity`
+  padding:10px;
+  border-radius:20px;
+  background-color:${props => props.isSelected ?  colors.pointRed :"#fff" };
+  border:${props => props.isSelected ? "none" : `1px solid ${colors.pointRed}` };
+  
+`
+
+const CategoryText = styled.Text`
+  font-size:16px;
+  font-weight:600;
+  color:${props => props.isSelected ? "#fff" : colors.pointRed};
+`
+
+const CategoryTitle = styled.Text`
+  font-size:18px;
+  font-weight:600;
+  color:${colors.lightGray};
 `

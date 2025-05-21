@@ -102,12 +102,28 @@ const DetailRecipe = ({route}) => {
           </ScrollView>
         </ContentsEl>
         <MarginVertical margin={20}/>
-        <ContentsEl>
+        <ContentsEl style={{alignItems:'center'}}>
           <CateogryText>소요시간</CateogryText>
-          <CateogryText>{recipeInfo[0]?.rcp_cooktime}분</CateogryText>
+          <View style={{backgroundColor:colors.pointOrange, padding:10, borderRadius:20}}>
+            <CateogryText style={{color:"#fff"}}>{recipeInfo[0]?.rcp_cooktime}분</CateogryText>
+          </View>
         </ContentsEl>
         <MarginVertical margin={20}/>
-        <CateogryText>조리과정</CateogryText>
+        <ContentsEl style={{alignItems:'center'}}>
+          <CateogryText>키워드</CateogryText>
+          <View style={{backgroundColor:colors.pointOrange, padding:10, borderRadius:20}}>
+            <CateogryText style={{color:"#fff"}}>{recipeInfo[0]?.rcp_keyword}</CateogryText>
+          </View>
+        </ContentsEl>
+        <MarginVertical margin={20}/>
+        <ContentsEl style={{alignItems:'center'}}>
+          <CateogryText>레시피 타입</CateogryText>
+          <View style={{backgroundColor:colors.pointOrange, padding:10, borderRadius:20}}>
+            <CateogryText style={{color:"#fff"}}>{recipeInfo[0]?.rcp_type}</CateogryText>
+          </View>
+        </ContentsEl>
+        <MarginVertical margin={30}/>
+        <CateogryText style={{textAlign:'center', fontSize:20}}>조리과정</CateogryText>
         <MarginVertical margin={20}/>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
           {recipeInfo[0]?.steps.map((el,index) => {
@@ -118,8 +134,9 @@ const DetailRecipe = ({route}) => {
                 </RecipeStepNum>
                 <RecipeStepEl>
                   <RecipeStepImg>
-                    <Image source={{uri:el?.image_url}} style={{width:'100%', height:"100%", resizeMode:'contain', borderRadius:10}}/>
+                    <Image source={{uri:el?.image_url}} style={{width:'100%', height:"100%", borderRadius:10}}/>
                   </RecipeStepImg>
+                  <MarginVertical margin={5}/>
                   <RecipeContentsText>
                     {el?.instruction}
                   </RecipeContentsText>
@@ -128,7 +145,7 @@ const DetailRecipe = ({route}) => {
             )
           })}
         </ScrollView>
-        <MarginVertical margin={50}/>
+        <MarginVertical margin={20}/>
         <View style={{width:'100%', alignItems:'center'}}>
           <Button text={"다른 레시피 보러가기"} handleButton={() => navigation.goBack()} isValid={true}/>
         </View>
@@ -181,6 +198,7 @@ const ContentsEl = styled.View`
   flex-direction:row;
   align-items:flex-start;
   gap:15px;
+  
 `
 
 const ButtonEl = styled.TouchableOpacity`
@@ -224,8 +242,9 @@ const RecipeStepEl = styled.View`
 `
 
 const RecipeStepImg = styled.View`
-  width:90%;
-  height:240px;
+  width:100%;
+  height:140px;
+
 `
 
 const RecipeContentsText = styled.Text`

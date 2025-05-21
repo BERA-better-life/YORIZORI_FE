@@ -5,7 +5,7 @@ import { Image, ScrollView } from "react-native"
 import Feather from '@expo/vector-icons/Feather';
 import IngredientEl from "./IngredientEl";
 import { useIngredients } from "../../hooks/useIngredients";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
 const SearchIngredients = ({text, selectedIngredientsList, setSelectedIngredientsList, version, excludedIngredientsList, setExcludedIngredientsList, step}) => {
   const ingredientsList = ["미역","오트밀","참치액","간장","참기름","참치캔","깨"]
@@ -25,7 +25,14 @@ const SearchIngredients = ({text, selectedIngredientsList, setSelectedIngredient
 
   useEffect(() => {
     setSearchInput("")
+    setSearchIngredientsList([])
+    
+    
   },[step])
+
+  
+
+  
   
   
 
