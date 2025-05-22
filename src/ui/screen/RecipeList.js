@@ -1,4 +1,4 @@
-import { Image, SafeAreaView, ScrollView, TouchableOpacity, View } from "react-native"
+import { Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native"
 import { styled } from "styled-components"
 import { colors } from "../styles/colors"
 import { size } from "../styles/size"
@@ -8,7 +8,7 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MarginVertical from "../components/MarginVertical";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useUserLoginStore } from "../../store/userStore";
 import GoToLoginButton from "../components/GoToLoginButton";
 import { useRecipe } from "../../hooks/useRecipe";
@@ -16,6 +16,7 @@ import { useIngredients } from "../../hooks/useIngredients";
 import { useLike } from "../../hooks/useLike";
 import { useBookMark } from "../../hooks/useBookmark";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import LottieView from 'lottie-react-native';
 
 
 
@@ -37,6 +38,8 @@ const RecipeList = ({route}) => {
   const typeArr = ["과자","국/탕","김치/젓갈/장류", "디저트","메인반찬","면/만두","밑반찬","밥/죽/떡","빵","샐러드","스프","양념/소스/잼","양식","찌개","차/음료/술","퓨전","기타"]
   const [keyword, setKeyword] = useState([])
   const [type, setType] = useState([])
+  const animation = useRef(null);
+  const [isFinishied, setIsFinishied] = useState(false);
   
 
   
@@ -58,7 +61,7 @@ const RecipeList = ({route}) => {
 
   useFocusEffect(
     useCallback(() => {
-    if(isLogin){handleSearchRecipeForUser(setRecipeList)}
+    if(isLogin){handleSearchRecipeForUser(setRecipeList,"",[],[],setIsFinishied)}
     },[]),
 )
 
@@ -69,9 +72,11 @@ const RecipeList = ({route}) => {
   useEffect(() => {
     var sort = selectedSort === "짧은 조리시간순" ? "rcp_cooktime_asc" : selectedSort === "긴 조리시간순" ? "rcp_cooktime_desc" : selectedSort === "적은 필요재료순" ? "rcp_ingredient_cnt_asc" : selectedSort === "많은 필요재료순" ? "rcp_ingredient_cnt_desc" : selectedSort === "많은 좋아요순" ? "likes_desc" : "likes_asc"
     if(!isLogin){
-      handleSearchRecipeForNonUser(route.params.ingredientsText, route.params.excludedIngredientsText,setRecipeList,"",sort, keyword, type)
+      setIsFinishied(false);
+      handleSearchRecipeForNonUser(route.params.ingredientsText, route.params.excludedIngredientsText,setRecipeList,"",sort, keyword, type, setIsFinishied)
     }else{
-      handleSearchRecipeForUser(setRecipeList, sort, keyword, type)
+      setIsFinishied(false);
+      handleSearchRecipeForUser(setRecipeList, sort, keyword, type, setIsFinishied)
     }
   },[selectedSort, type, keyword])
 
@@ -79,7 +84,36 @@ const RecipeList = ({route}) => {
 
   return (
     <SafeAreaView style={{backgroundColor:colors.bgColor}}>
+      {!isFinishied ? 
+      <View style={{width: size.width,
+        height: size.height,
+        backgroundColor: 'rgba(255,255,255,.5)',
+        position:'absolute',
+        zIndex:3,
+        display:'flex',
+        justifyContent:'center',
+        alignItems:'center',
+        top:0}}>
+        <LottieView
+        autoPlay
+        ref={animation}
+        style={{
+          width: 200,
+          height: 200,
+        }}
+        
+        source={require('../../../assets/loadingAni.json')}/>
+        </View>
+      
+      :
+      <></>
+      }
+      
+      
+      
       <Body>
+      
+      
         <Header>
           <TouchableOpacity style={{position:'absolute', left:0}} onPress={() => navigation.goBack()}>
             <FontAwesome name="arrow-left" size={24} color={colors.fontMain} />
@@ -87,6 +121,7 @@ const RecipeList = ({route}) => {
           <HeaderText>레시피 검색</HeaderText>
         </Header>
         <MarginVertical margin={30}/>
+        
         <View style={{width:"100%", flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
           <Title>검색된 레시피</Title>
           <TouchableOpacity onPress={() => setShowDropDown(prev => !prev)}>
@@ -142,13 +177,14 @@ const RecipeList = ({route}) => {
           <RecipeArea>
             {recipeList.map((el,index) => {
               return(
-                <RecipeEl key={index} onPress={() => navigation.navigate("DetailRecipe", {recipeId:el.rcp_number})}>
+                <RecipeEl key={index} onPress={() => navigation.navigate("DetailRecipe", {recipeId:el.rcp_number})} isLogin={isLogin}>
                   <RecipeImg>
                     {el.rcp_picture ?
-                    <Image source={{ uri: el.rcp_picture}} style={{width:"90%", height:"70%", borderRadius:10}}/>:
+                    <Image source={{ uri: el.rcp_picture}} style={{width:"100%", height:"95%", borderRadius:10}}/>:
                     <MaterialIcons name="image-not-supported" size={40} color="black" />
                     }
                   </RecipeImg>
+                  <MarginVertical margin={10}/>
                   <RecipeTitle>{el.rcp_name}</RecipeTitle>
                   <MarginVertical margin={10}/>
                   <ButtonArea>
@@ -163,6 +199,18 @@ const RecipeList = ({route}) => {
                     </>
                     :<></>}
                   </ButtonArea>
+                  <MarginVertical margin={10}/>
+                  <TagArea>
+                    <View style={{flexDirection:'row', alignItems:'center', gap:5}}>
+                      <MaterialIcons name="timer" size={24} color={colors.pointBlue} />
+                      <Text style={{fontWeight:500, fontSize:15, color:colors.fontMain}}>{`${el.rcp_cooktime} M`}</Text>
+                    </View>
+                    <MarginVertical margin={5}/>
+                    <View style={{flexDirection:'row', gap:5}}>
+                      <View style={{backgroundColor:colors.pointOrange, padding:5, borderRadius:20, justifyContent:'center', alignItems:'center' }}><CategoryText style={{color:"#fff",fontSize:14}}>{`#${el.rcp_keyword}`}</CategoryText></View>
+                      <View style={{backgroundColor:colors.pointOrange, padding:5, borderRadius:20, justifyContent:'center', alignItems:'center'}}><CategoryText style={{color:"#fff",fontSize:14}}>{`#${el.rcp_type}`}</CategoryText></View>
+                    </View>
+                  </TagArea>
                 </RecipeEl>
               )
             })}
@@ -182,7 +230,7 @@ const Body = styled.View`
   width:${size.width}px;
   height:${size.height}px;
   background-color:${colors.bgColor};
-  padding:0 40px;
+  padding:0 30px;
 `
 
 const Header = styled.View`
@@ -216,7 +264,7 @@ const RecipeArea = styled.View`
 const RecipeEl = styled.TouchableOpacity`
   width:45%;
   background-color:#fff;
-  height:220px;
+  height:${(props) => (props.isLogin ? 310 : 270)};
   border-radius:10px;
   padding: 15px;
 `
@@ -229,7 +277,7 @@ const RecipeTitle = styled.Text`
 
 const RecipeImg = styled.View`
   width:100%;
-  height:70%;
+  height:50%;
 `
 
 const ButtonArea = styled.View`
@@ -293,4 +341,8 @@ const CategoryTitle = styled.Text`
   font-size:18px;
   font-weight:600;
   color:${colors.lightGray};
+`
+
+const TagArea = styled.View`
+
 `
