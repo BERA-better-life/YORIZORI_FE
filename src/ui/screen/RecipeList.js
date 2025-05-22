@@ -326,7 +326,7 @@ const CategoryArea = styled.View`
 const CategoryEl = styled.TouchableOpacity`
   padding:10px;
   border-radius:20px;
-  background-color:${props => props.isSelected ?  colors.pointRed :"#fff" };
+  background-color:${props => props.isSelected ?  colors.pointRed :"" };
   border:${props => props.isSelected ? "none" : `1px solid ${colors.pointRed}` };
   
 `
