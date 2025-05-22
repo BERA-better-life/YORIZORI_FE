@@ -15,6 +15,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { useUserLoginStore } from "../../store/userStore"
 import GoToLoginButton from "../components/GoToLoginButton"
 
+
 const MyFridge = () => {
   const ingredientsArray = new Array(10).fill("")
   const navigation = useNavigation();
@@ -27,6 +28,7 @@ const MyFridge = () => {
   const [isDeleteMode, setIsDeleteMode] = useState(false);
   const {deleteUserIngredients} = useIngredients();
   const {isLogin} = useUserLoginStore();
+  const [isOpenModal, setIsOpenModal] = useState(false);
 
   const handleButton = async () => {
     if (isDeleteMode) {
@@ -47,6 +49,22 @@ const MyFridge = () => {
       navigation.navigate("AddFreezerEl");
     }
   };
+
+  const InfoModal = () => {
+    return(
+      <View style={{backgroundColor:"#fff", padding:20, borderRadius:10, position:'absolute', width:'70%', top:40,right:0, zIndex:3, gap:10}}>
+        <Text style={{textAlign:'center'}}>재료 옆 표시가 어떤 의미를 가지는지 알려드릴게요!</Text>
+        {["red","orange","yellow","blue"].map((el,index) => {
+          return(
+            <View style={{flexDirection:'row', gap:5, alignItems:'center'}}>
+              <AlertCircle style={{backgroundColor:el === "red" ? colors.pointRed : el === "orange" ? colors.pointOrange : el === "yellow" ? "#FFDB49" : colors.pointBlue}}/>
+              <Text style={{fontSize:16, color:colors.fontMain}}>{el === "red" ? "재료의 유통기한이 3일 이내로 남은 경우" : el === "orange" ? "재료의 유통기한이 7일 이내로 남은 경우" : el === "yellow" ? "재료의 유통기한이 한달 이내로 남은 경우" : "재료의 유통기한이 한달보다 많이 남은 경우"}</Text>
+            </View>
+          )
+        })}
+      </View>
+    )
+  }
   
   
 
@@ -111,10 +129,17 @@ const MyFridge = () => {
             <Image source={cart_icon} style={{width:32, height:32}}/>
             </TouchableOpacity> 
           </View>
+          <View style={{flexDirection:'row', gap:10}}>
+          <TouchableOpacity onPress={() => setIsOpenModal(prev => !prev)}>
+            <FontAwesome name="question-circle" size={32} color={colors.pointBlue} />
+          </TouchableOpacity>
           <TouchableOpacity onPress={() => setIsDeleteMode(prev => !prev)}>
             <FontAwesome name="trash" size={32} color={isDeleteMode ? colors.pointBlue : colors.fontMain} />
           </TouchableOpacity>
+          </View>
+          {isOpenModal ? <InfoModal/> : <></>}
         </View>
+        
         <MarginVertical margin={20}/>
         <FridgeArea>
           <FridgeBody>
