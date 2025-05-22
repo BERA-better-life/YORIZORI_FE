@@ -1,11 +1,13 @@
 import { styled } from "styled-components"
 import { colors } from "../styles/colors"
 import MarginVertical from "./MarginVertical"
-import { Image, ScrollView } from "react-native"
+import { Image, ScrollView, Text, View } from "react-native"
 import Feather from '@expo/vector-icons/Feather';
 import IngredientEl from "./IngredientEl";
 import { useIngredients } from "../../hooks/useIngredients";
 import { use, useEffect, useState } from "react";
+import { size } from "../styles/size";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 const SearchIngredients = ({text, selectedIngredientsList, setSelectedIngredientsList, version, excludedIngredientsList, setExcludedIngredientsList, step}) => {
   const ingredientsList = ["미역","오트밀","참치액","간장","참기름","참치캔","깨"]
@@ -52,8 +54,55 @@ const SearchIngredients = ({text, selectedIngredientsList, setSelectedIngredient
         </SearchIcon>
       </SearchBarArea>
       <MarginVertical margin={30}/>
-      
-        <ScrollView style={{height: version === "select" || version === "exclude" ? 280 : 380}} showsVerticalScrollIndicator={false}>
+        <View style={{flexDirection:'row', alignItems:'center', gap:5}}>
+        <MaterialCommunityIcons name="basket-check" size={32} color={colors.pointRed} />
+        <Text style={{fontSize:16, fontWeight:600, color:colors.fontMain}}>선택된 재료</Text>
+        </View>
+        <MarginVertical margin={10}/>
+        {version === "select" || version === "freezer" ? 
+        <View style={{flexDirection:'row', flexWrap:'wrap', gap:5}}>
+        {selectedIngredientsList.map((el,index) => {
+          return(
+            <IngredientEl
+              text={version === "freezer" ? el.ingredient_name : el} 
+              id={el.ingredient_id} 
+              key={index} 
+              selectedIngredientsList={selectedIngredientsList} 
+              setSelectedIngredientsList={setSelectedIngredientsList} 
+              isTouchable={true} 
+              setExcludedIngredientsList={setExcludedIngredientsList}
+              excludedIngredientsList={excludedIngredientsList}
+              version={version}/>
+          )
+        })}
+        </View>
+        : 
+        <View style={{flexDirection:'row', flexWrap:'wrap', gap:5}}>
+        {excludedIngredientsList.map((el,index) => {
+          return(
+            <IngredientEl
+              text={el} 
+              id={el.ingredient_id} 
+              key={index} 
+              selectedIngredientsList={selectedIngredientsList} 
+              setSelectedIngredientsList={setSelectedIngredientsList} 
+              isTouchable={true} 
+              setExcludedIngredientsList={setExcludedIngredientsList}
+              excludedIngredientsList={excludedIngredientsList}
+              version={version}/>
+          )
+        })}
+        </View>}
+        <MarginVertical margin={15}/>
+        <View style={{gap:7, flexDirection:'row', overflow:'hidden'}}>
+        {new Array(20).fill("-").map((el,index) => {
+          return(
+            <View style={{width:size.width/40, height:1.5, backgroundColor:"rgba(20, 36, 72, 0.2)", borderRadius:40}} key={index}></View>
+          )
+        })}
+        </View>
+        <MarginVertical margin={15}/>
+        <ScrollView style={{height: version === "select" || version === "exclude" ? 200 : 300}} showsVerticalScrollIndicator={false}>
         <IngredientsArea>
         {searchIngredientsList.map((el,index) => {
           return(
@@ -69,6 +118,7 @@ const SearchIngredients = ({text, selectedIngredientsList, setSelectedIngredient
               version={version}/>
           )
         })}
+        <MarginVertical margin={80}/>
         </IngredientsArea>
         </ScrollView>
       
@@ -118,6 +168,7 @@ const IngredientsArea = styled.View`
   flex-direction:row;
   flex-wrap:wrap;
   width:100%;
+  
   gap:10px;
 `
 

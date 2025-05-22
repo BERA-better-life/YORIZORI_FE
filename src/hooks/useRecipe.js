@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native"
 export const useRecipe = () => {
   const navigation = useNavigation();
 
-  const handleSearchRecipeForUser = async(setRecipeList, sort, keyword, type) => {
+  const handleSearchRecipeForUser = async(setRecipeList, sort, keyword, type, setIsFinishied) => {
     try {
       const token = await AsyncStorage.getItem("accessToken")
       const response = await baseUrl.post("/api/recipes/recommend/",{
@@ -21,12 +21,13 @@ export const useRecipe = () => {
       console.log(sort,keyword, type)
       console.log(response.data)
       setRecipeList(response.data)
+      setIsFinishied(true)
     } catch (error) {
       console.log(error)
     }
   }
 
-  const handleSearchRecipeForNonUser = async(ingredientsText, excludedIngredientsText,setRecipeList, version, sort,keyword,type) => {
+  const handleSearchRecipeForNonUser = async(ingredientsText, excludedIngredientsText,setRecipeList, version, sort,keyword,type, setIsFinishied) => {
     try {
       
       const token = await AsyncStorage.getItem("accessToken")
@@ -44,6 +45,7 @@ export const useRecipe = () => {
       console.log(response.data)
       if(version !== "cart"){
         navigation.navigate("RecipeList", {recipeList :response.data, ingredientsText:ingredientsText, excludedIngredientsText:excludedIngredientsText})
+        setIsFinishied(true)
       }
       setRecipeList(response.data)
     } catch (error) {

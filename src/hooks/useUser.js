@@ -37,7 +37,7 @@ export const useUser = () => {
       const {access, refresh} = response.data;
       await AsyncStorage.setItem("accessToken", access);
       await AsyncStorage.setItem("refreshToken",refresh)
-      setIsLogin()
+      setIsLogin(true)
       await getUserInfo()
       navigation.reset({
         routes:[{
@@ -77,7 +77,7 @@ export const useUser = () => {
         }
       })
       console.log(response.data)
-      setIsLogin()
+      setIsLogin(false)
       navigation.reset({
         routes:[{
           name:'Login'
