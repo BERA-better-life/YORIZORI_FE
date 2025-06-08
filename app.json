@@ -1,4 +1,5 @@
 {
+
   "expo": {
     "name": "yorizori",
     "slug": "yorizori",
@@ -13,16 +14,28 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.aszini.yorizori",
+      "buildNumber": "1.0.1", 
+      "infoPlist": {
+        "UIBackgroundModes": ["fetch", "remote-notification"],
+        "NSUserNotificationUsageDescription": "앱 알림을 받기 위해 필요합니다."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.aszini.yorizori"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "1db0fedf-c433-42da-8d9c-eae81b09f586"
+      }
     }
   }
 }

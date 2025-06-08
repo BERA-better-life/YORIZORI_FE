@@ -1,19 +1,32 @@
 
-import { SafeAreaView, ScrollView, TouchableOpacity, View } from 'react-native'
-import { styled } from 'styled-components'
+import {  ScrollView, TouchableOpacity, View } from 'react-native'
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+
+import styled from 'styled-components/native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { colors } from '../styles/colors';
 import { size } from '../styles/size';
 import { useNavigation } from '@react-navigation/native';
 import MarginVertical from '../components/MarginVertical';
+import { useState, useEffect } from "react"
+import { useIngredients } from "../../hooks/useIngredients"
+import dayjs from "dayjs"
+
 
 
 const Notification = () => {
   const navigation = useNavigation();
-  const notiArray = [["토마토",3],["쌀국수면",1],["새우", 0]]
+  const [ingredientsList, setIngredientsList] = useState([]);
+  const [expIngredientsList, setExpIngredientsList] = useState([]);
+  const {getUserIngredients} = useIngredients();
+
+  useEffect(() => {
+    getUserIngredients(setIngredientsList, setExpIngredientsList, true);
+  }, [])
+  
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{backgroundColor:colors.bgColor}}>
       <Body>
         <Header>
           <TouchableOpacity style={{position:'absolute', left:0}} onPress={() => navigation.goBack()}>
@@ -25,15 +38,17 @@ const Notification = () => {
         </Header>
         <MarginVertical margin={30}/>
         <ScrollView showsVerticalScrollIndicator={false}>
-          {notiArray.map((el,index) => {
+          {expIngredientsList.map((el,index) => {
             return(
-              <NotiEl key={index}>
+              <NotiEl key={index} style={{flexWrap:'wrap'}}>
                 <ValidCircle/>
                 <View style={{marginLeft:30, gap:5}}>
                   <NotiTitle>유통기한 알림</NotiTitle>
                   <View style={{flexDirection:'row'}}>
-                  <NotiText>{`${el[0]} 의 유통기한이 `}</NotiText>
-                  <NotiText style={{color:colors.pointRed}}>{`${el[1]} `}</NotiText>
+                  <NotiText>{`${el.ingredient_name} 의 유통기한이 `}</NotiText>
+                  <NotiText style={{color:colors.pointRed}}>{`${
+          dayjs(el.expiration_date).startOf('day').diff(dayjs().startOf('day'),'day')
+          } `}</NotiText>
                   <NotiText>{`일 남았어요!`}</NotiText>
                   </View>
                 </View>
@@ -81,13 +96,13 @@ const ValidCircle = styled.View`
 const NotiEl = styled.View`
   width:100%;
   background-color:#fff;
-  height:65px;
   padding:20px;
   display:flex;
   align-items:center;
   flex-direction:row;
   border-radius:10px;
   margin-bottom:15px;
+  
 `
 
 const NotiTitle = styled.Text`

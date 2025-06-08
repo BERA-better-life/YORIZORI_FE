@@ -1,5 +1,5 @@
-import { Image, SafeAreaView, Text, View } from "react-native"
-import { styled } from "styled-components"
+import { Image, Text, View } from "react-native"
+import styled from 'styled-components/native';
 import { size } from "../styles/size"
 import { colors } from "../styles/colors"
 import logo from '../../../assets/logo.png';
@@ -9,6 +9,8 @@ import { useNavigation } from "@react-navigation/native";
 import { useUser } from "../../hooks/useUser";
 import { useEffect, useState } from "react";
 import { useUserLoginStore } from "../../store/userStore";
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+
 
 
 const Login = () => {
