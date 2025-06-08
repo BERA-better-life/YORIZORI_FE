@@ -1,8 +1,10 @@
-import { Image, SafeAreaView, ScrollView, TouchableOpacity, View } from "react-native"
-import { styled } from "styled-components"
+import { Image, ScrollView, TouchableOpacity, View } from "react-native"
+import styled from 'styled-components/native';
 import { colors } from "../styles/colors"
 import { size } from "../styles/size"
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+
 
 import logo from '../../../assets/logo.png';
 import notification_icon from '../../../assets/notification_icon.png';
@@ -16,6 +18,7 @@ import { useIngredients } from "../../hooks/useIngredients";
 import { useUserLoginStore } from "../../store/userStore";
 import GoToLoginButton from "../components/GoToLoginButton";
 import dayjs from "dayjs";
+import IngredientReminder from "../components/Notification";
 
 const Home = () => {
   const ingredientsInfo = ['토마토','감자','우유','치즈','베이컨']
@@ -44,6 +47,7 @@ const Home = () => {
 
   return (
     <SafeAreaView style={{backgroundColor:colors.bgColor}}>
+      {/* <IngredientReminder userIngredients={expIngredientsList.map(el => el.ingredient_name)}/> */}
       <ScrollView showsVerticalScrollIndicator={false}>
       <HomeBody>
         

@@ -1,6 +1,8 @@
 import React, { useCallback, useState } from 'react'
-import { Image, SafeAreaView, ScrollView, TouchableOpacity, View } from 'react-native'
-import { styled } from 'styled-components'
+import { Image,  ScrollView, TouchableOpacity, View } from 'react-native'
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+
+import styled from 'styled-components/native';
 import { colors } from '../styles/colors'
 import { size } from '../styles/size'
 

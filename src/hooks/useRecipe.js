@@ -37,11 +37,8 @@ export const useRecipe = () => {
         sort_by: sort,
         rcp_keyword: keyword,
         rcp_type: type
-      },{
-        headers:{
-          Authorization:`Bearer ${token}`
-        }
-      })
+      }
+        )
       console.log(response.data)
       if(version !== "cart"){
         navigation.navigate("RecipeList", {recipeList :response.data, ingredientsText:ingredientsText, excludedIngredientsText:excludedIngredientsText})
@@ -57,9 +54,7 @@ export const useRecipe = () => {
     try {
       const token = await AsyncStorage.getItem("accessToken")
       const response = await baseUrl.get(`/api/recipes/recipe/${recipeNum}/`,{
-        headers:{
-          Authorization:`Bearer ${token}`
-        }
+        
       })
       console.log(response.data)
       setRecipeInfo([response.data])

@@ -1,6 +1,7 @@
-import { SafeAreaView, TouchableOpacity, View } from "react-native"
+import {  TouchableOpacity, View } from "react-native"
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from "../styles/colors"
-import { styled } from "styled-components"
+import styled from 'styled-components/native';
 import { size } from "../styles/size"
 import SearchIngredients from "../components/SearchIngredients"
 import FontAwesome from '@expo/vector-icons/FontAwesome';

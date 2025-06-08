@@ -1,5 +1,7 @@
-import { Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native"
-import { styled } from "styled-components"
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native"
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+
+import styled from 'styled-components/native';
 import { colors } from "../styles/colors"
 import { size } from "../styles/size"
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -214,9 +216,9 @@ const RecipeList = ({route}) => {
                 </RecipeEl>
               )
             })}
-            <MarginVertical margin={180}/>
-            </RecipeArea>
             
+            </RecipeArea>
+            <MarginVertical margin={180}/>
           </ScrollView>
 
       </Body>

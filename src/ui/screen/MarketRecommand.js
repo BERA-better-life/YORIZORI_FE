@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Image, SafeAreaView, ScrollView, TouchableOpacity, View } from 'react-native'
-import { styled } from 'styled-components'
+import { Image, ScrollView, TouchableOpacity, View } from 'react-native'
+import styled from 'styled-components/native';
 import { size } from '../styles/size'
 import { colors } from '../styles/colors'
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -11,6 +11,8 @@ import RecipeEl from '../components/RecipeEl'
 import MarginVertical from '../components/MarginVertical'
 import { useIngredients } from '../../hooks/useIngredients'
 import { useRecipe } from '../../hooks/useRecipe'
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+
 
 
 const MarketRecommand = () => {

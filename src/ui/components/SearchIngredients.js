@@ -1,4 +1,4 @@
-import { styled } from "styled-components"
+import styled from 'styled-components/native';
 import { colors } from "../styles/colors"
 import MarginVertical from "./MarginVertical"
 import { Image, ScrollView, Text, View } from "react-native"
@@ -23,6 +23,7 @@ const SearchIngredients = ({text, selectedIngredientsList, setSelectedIngredient
 
   const getSearchData = (searchInput) => {
     setSearchIngredientsList(allIngredientsList.filter((el) => el.ingredient_name.includes(searchInput)))
+    console.log("실행")
   }
 
   useEffect(() => {

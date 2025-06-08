@@ -1,5 +1,7 @@
-import { SafeAreaView, Text, TouchableOpacity, View } from "react-native"
-import { styled } from "styled-components"
+import { Text, TouchableOpacity, View } from "react-native"
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+
+import styled from 'styled-components/native';
 import { size } from "../styles/size"
 import { colors } from "../styles/colors"
 import dayjs from "dayjs";
